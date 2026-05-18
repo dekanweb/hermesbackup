@@ -437,6 +437,7 @@ Enable/disable via `hermes tools` (interactive) or `hermes tools enable/disable 
 
 Browser quick setup notes and provider precedence are in `references/browser-use-setup.md`.
 Browser research workflow and extraction tips are in `references/browser-research-workflow.md`.
+Hermes GitHub backup scope, exclusions, and restore notes are in `references/github-backup-workflow.md`.
 
 Full enumeration lives in `toolsets.py` as the `TOOLSETS` dict; `_HERMES_CORE_TOOLS` is the default bundle most platforms inherit from.
 
@@ -660,6 +661,18 @@ the `cronjob` tool, the `hermes cron` CLI (`list`, `add`, `edit`,
   session (keeps role alternation intact).
 
 User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
+
+### Backup & Restore (GitHub mirror)
+
+When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* workflow, not just a repo sync.
+
+- Mirror the durable Hermes state, including config, skills, cron, sessions, and memories.
+- Keep secrets and runtime junk out of the backup by default.
+- Prefer a private repo with repo-scoped SSH access.
+- If the user has a named manual trigger phrase for backups, honor it consistently.
+- Keep backup and restore logic separate so restore can reconstruct the same Hermes home/profile layout without changing the backup path.
+
+See `references/github-backup-workflow.md` for the canonical scope and exclusions.
 
 ### Curator (skill lifecycle)
 
