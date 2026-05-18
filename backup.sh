@@ -3,6 +3,9 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
+# Mirror the Hermes-related state into the repo-local snapshot.
+python3 ./backup_state.py --dest ./state
+
 # Use the repo-specific SSH key configured in git core.sshCommand.
 
 # Stage everything that is not ignored.

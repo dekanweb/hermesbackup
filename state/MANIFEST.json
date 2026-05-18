@@ -1,0 +1,77 @@
+{
+  "created_at": "2026-05-18T18:21:08.785407+00:00",
+  "exclusions": {
+    "directories": [
+      ".git",
+      ".mypy_cache",
+      ".pytest_cache",
+      ".ruff_cache",
+      ".ssh",
+      ".venv",
+      "__pycache__",
+      "build",
+      "dist",
+      "env",
+      "node_modules",
+      "venv"
+    ],
+    "files": [
+      ".env",
+      ".env.local",
+      ".envrc",
+      "auth.json",
+      "cron.pid",
+      "gateway.pid",
+      "google_client_secret.json",
+      "google_token.json"
+    ],
+    "suffixes": [
+      ".pyc",
+      ".pyo",
+      ".pyd",
+      ".db-wal",
+      ".db-shm",
+      ".db-journal",
+      ".log",
+      ".pid",
+      ".key",
+      ".pem",
+      ".token"
+    ]
+  },
+  "included": [
+    {
+      "dest": "hermes-home",
+      "source": "/opt/data/.hermes"
+    },
+    {
+      "dest": "skills",
+      "source": "/opt/data/skills"
+    },
+    {
+      "dest": "cron",
+      "source": "/opt/data/cron"
+    },
+    {
+      "dest": "sessions",
+      "source": "/opt/data/sessions"
+    },
+    {
+      "dest": "memories",
+      "source": "/opt/data/memories"
+    }
+  ],
+  "root_files": [
+    "config.yaml",
+    "channel_directory.json",
+    "SOUL.md",
+    ".skills_prompt_snapshot.json"
+  ],
+  "source_root": "/opt/data",
+  "stats": {
+    "copied_dirs": 206,
+    "copied_files": 583,
+    "skipped_dirs": 0,
+    "skipped_files": 0
+  }
+}
