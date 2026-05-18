@@ -39,3 +39,6 @@ Thumbs.db
 
 # Hermes-specific runtime artifacts
 *.log
+
+# Backup automation secrets / local SSH material
+.ssh/
