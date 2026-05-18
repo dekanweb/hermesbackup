@@ -69,6 +69,7 @@ EXCLUDED_SUFFIXES = (
     ".db-journal",
     ".log",
     ".pid",
+    ".lock",
     ".key",
     ".pem",
     ".token",
