@@ -12,7 +12,7 @@ if git diff --cached --quiet; then
   exit 0
 fi
 
-stamp="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+stamp="$(TZ=Europe/Brussels date '+%Y-%m-%d %H:%M:%S %Z')"
 git commit --quiet -m "Backup: ${stamp}"
 git push --quiet origin main
 
