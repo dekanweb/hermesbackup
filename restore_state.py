@@ -29,6 +29,7 @@ STATE_MAP = [
     ("hermes-home", ".hermes"),
     ("skills", "skills"),
     ("cron", "cron"),
+    ("scripts", "scripts"),
     ("sessions", "sessions"),
     ("memories", "memories"),
 ]

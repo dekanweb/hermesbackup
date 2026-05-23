@@ -30,6 +30,7 @@ SOURCE_DIRS = [
     (SOURCE_ROOT / ".hermes", "hermes-home"),
     (SOURCE_ROOT / "skills", "skills"),
     (SOURCE_ROOT / "cron", "cron"),
+    (SOURCE_ROOT / "scripts", "scripts"),
     (SOURCE_ROOT / "sessions", "sessions"),
     (SOURCE_ROOT / "memories", "memories"),
 ]
