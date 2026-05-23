@@ -20,17 +20,17 @@
       "schedule_display": "0 16 * * *",
       "repeat": {
         "times": null,
-        "completed": 5
+        "completed": 6
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-05-18T16:15:37.546546+00:00",
-      "next_run_at": "2026-05-23T16:17:01.080476+00:00",
-      "last_run_at": "2026-05-23T16:00:33.263299+00:00",
+      "next_run_at": "2026-05-23T16:18:11.579691+00:00",
+      "last_run_at": "2026-05-23T16:17:33.396539+00:00",
       "last_status": "error",
-      "last_error": "Script not found: /opt/data/scripts/hermesbackup_daily.sh",
+      "last_error": "Blocked: script path resolves outside the scripts directory (/opt/data/scripts): 'hermesbackup_daily.sh'",
       "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
@@ -43,5 +43,5 @@
       "workdir": null
     }
   ],
-  "updated_at": "2026-05-23T16:17:01.080711+00:00"
+  "updated_at": "2026-05-23T16:18:11.579937+00:00"
 }

@@ -54,3 +54,14 @@ Do **not** back up secrets or runtime junk:
 
 ## Practical pitfall
 Hermes-specific state is often split across multiple directories and top-level files. If only the repo root or one subdirectory is mirrored, the backup is incomplete even if git push succeeds.
+
+## Cron wrapper placement
+If a cron job uses the `script` field, the executable must be reachable under `HERMES_HOME/scripts/` at runtime. A wrapper that only exists in a mirrored state tree (for example, under `state/hermes-home/scripts/`) is not enough on its own.
+
+Recommended pattern:
+- keep the canonical script in the backed-up state tree if you want it mirrored,
+- and expose a live copy or symlink at `HERMES_HOME/scripts/<name>` so the cron runner can resolve it.
+
+Quick verification:
+- confirm the path exists and is executable,
+- then run the wrapper directly with the same working directory the job expects before waiting for the next schedule tick.

@@ -659,6 +659,11 @@ the `cronjob` tool, the `hermes cron` CLI (`list`, `add`, `edit`,
   `skip_memory=True` by default, and cron deliveries are framed with a
   header/footer instead of being mirrored into the target gateway
   session (keeps role alternation intact).
+- **Script resolution:** if a cron job uses `script`, the runtime looks
+  under `$HERMES_HOME/scripts/`. Keep the authoritative script in the
+  mirrored state tree if you want it backed up, but also expose a live
+  copy or symlink at `$HERMES_HOME/scripts/<name>` so cron can resolve
+  it. Verify the wrapper directly before waiting on the next tick.
 
 User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
 
