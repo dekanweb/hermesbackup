@@ -666,13 +666,30 @@ User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
 
 When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* workflow, not just a repo sync.
 
-- Mirror the durable Hermes state, including config, skills, cron, sessions, and memories.
-- Keep secrets and runtime junk out of the backup by default.
-- Prefer a private repo with repo-scoped SSH access.
-- If the user has a named manual trigger phrase for backups, honor it consistently.
+- Mirror the durable Hermes state, not task progress or transient logs.
+- In this environment, the backup scope is the repo-local `state/` mirror of:
+  - `.hermes/`
+  - `skills/`
+  - `cron/`
+  - `sessions/`
+  - `memories/`
+  - `config.yaml`
+  - `channel_directory.json`
+  - `SOUL.md`
+  - `.skills_prompt_snapshot.json`
+- Keep secrets and runtime junk out of the backup by default:
+  - `.env`
+  - `auth.json`
+  - `.ssh/`
+  - lock / pid / cache files
+- Prefer a private repo with a repo-scoped SSH deploy key and write access.
+- Keep the private key local only; if one repo uses one key, pin it with `core.sshCommand`.
+- If the user has a named manual trigger phrase for backups, honor it immediately and do not ask for extra confirmation. In this session the trigger phrase is **“şimdi yedek al”**.
 - Keep backup and restore logic separate so restore can reconstruct the same Hermes home/profile layout without changing the backup path.
+- Restore workflows should support selecting an older git ref and a dry run before writing files.
+- Backup scripts should emit a simple status contract for automation (`STATUS: PUSHED` / `STATUS: NO_CHANGES`).
 
-See `references/github-backup-workflow.md` for the canonical scope and exclusions.
+See `references/github-backup-workflow.md` for the canonical scope, exclusions, and restore notes.
 
 ### Curator (skill lifecycle)
 

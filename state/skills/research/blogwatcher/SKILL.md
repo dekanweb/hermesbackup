@@ -14,6 +14,7 @@ prerequisites:
 
 references:
   - references/go-install-and-verify.md
+  - references/newsroom-sitemap-fallback.md
 ---
 
 # Blogwatcher
@@ -136,6 +137,7 @@ Unread articles (2):
 
 - Auto-discovers RSS/Atom feeds from blog homepages when no `--feed-url` is provided.
 - Falls back to HTML scraping if RSS fails and `--scrape-selector` is configured.
+- For newsroom/news pages without a feed, use the sitemap fallback workflow in `references/newsroom-sitemap-fallback.md`.
 - Categories from RSS/Atom feeds are stored and can be used to filter articles.
 - Import blogs in bulk from OPML files exported by Feedly, Inoreader, NewsBlur, etc.
 - Database stored at `~/.blogwatcher-cli/blogwatcher-cli.db` by default (override with `--db` or `BLOGWATCHER_DB`).

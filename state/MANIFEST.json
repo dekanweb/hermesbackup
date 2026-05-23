@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-05-18T18:35:56.077733+00:00",
+  "created_at": "2026-05-23T16:17:08.664080+00:00",
   "exclusions": {
     "directories": [
       ".git",
@@ -70,8 +70,8 @@
   ],
   "source_root": "/opt/data",
   "stats": {
-    "copied_dirs": 206,
-    "copied_files": 583,
+    "copied_dirs": 207,
+    "copied_files": 595,
     "skipped_dirs": 0,
     "skipped_files": 3
   }

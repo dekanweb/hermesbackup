@@ -21,14 +21,36 @@ Do **not** back up secrets or runtime junk:
 
 ## Workflow notes
 - Prefer a private GitHub repo for backups.
-- Use SSH deploy keys or equivalent repo-scoped access.
-- Manual trigger phrases can be mapped to a backup action when the user has established one.
+- Use SSH deploy keys or equivalent repo-scoped access, ideally a repo-specific Ed25519 key with write access.
+- Keep the private key local only; do not mirror `.ssh/` into the backup tree.
+- Manual trigger phrases can be mapped to a backup action when the user has established one; in this session the phrase is **"şimdi yedek al"**.
 - Backups should capture the live persistent state, not task progress or transient logs.
+- A useful automation contract is `STATUS: PUSHED` or `STATUS: NO_CHANGES`.
+- In this environment, the backup mirror stores Hermes state under repo-local `state/`.
 
 ## Restore notes
 - A restore should be able to reconstruct the same state layout from the repo mirror.
 - Keep restore logic separate from backup logic so the backup path stays simple and safe.
+- Support restoring from an older git ref and dry-running before writing files.
 - Verify that restored files land in the same Hermes home/profile paths used by the running instance.
+
+## Backup scope recap
+- `.hermes/`
+- `skills/`
+- `cron/`
+- `sessions/`
+- `memories/`
+- `config.yaml`
+- `channel_directory.json`
+- `SOUL.md`
+- `.skills_prompt_snapshot.json`
+
+## Exclusions recap
+- `.env`
+- `auth.json`
+- `.ssh/`
+- lock / pid / cache files
+- any tokens, private keys, or provider credentials
 
 ## Practical pitfall
 Hermes-specific state is often split across multiple directories and top-level files. If only the repo root or one subdirectory is mirrored, the backup is incomplete even if git push succeeds.
