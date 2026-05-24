@@ -18,6 +18,18 @@ File tools do not expand shell variables. Do not pass paths containing `$OBSIDIA
 
 If the vault path is unknown, `terminal` is acceptable for resolving `OBSIDIAN_VAULT_PATH` or checking whether the fallback path exists. Once the path is known, switch back to file tools.
 
+## Portable Linux installs in constrained environments
+
+When asked to install Obsidian on Linux and the normal package route is unavailable, prefer the official AppImage and treat it as a portable app:
+
+1. Download the latest official AppImage from the Obsidian releases page.
+2. If FUSE is unavailable, extract the AppImage with `--appimage-extract` and run from the extracted directory.
+3. If the binary is missing shared libraries, inspect with `ldd` and satisfy them with the system package manager or a local library directory.
+4. On sandboxed/containerized desktops, pass `--no-sandbox` when required by Electron/Chromium packaging.
+5. Verify with a small launch command before declaring success.
+
+If a GUI still cannot start because the host lacks desktop services, stop at the portable-install boundary and report that the app files are installed even if the full UI cannot be launched in that environment.
+
 ## Read a note
 
 Use `read_file` with the resolved absolute path to the note. Prefer this over `cat` because it provides line numbers and pagination.

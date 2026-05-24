@@ -667,15 +667,17 @@ the `cronjob` tool, the `hermes cron` CLI (`list`, `add`, `edit`,
 
 User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
 
-### Backup & Restore (GitHub mirror)
+## Backup & Restore (GitHub mirror)
 
 When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* workflow, not just a repo sync.
 
 - Mirror the durable Hermes state, not task progress or transient logs.
 - In this environment, the backup scope is the repo-local `state/` mirror of:
+- In this environment, the backup scope is the repo-local `state/` mirror of:
   - `.hermes/`
   - `skills/`
   - `cron/`
+  - `scripts/`
   - `sessions/`
   - `memories/`
   - `config.yaml`
@@ -693,8 +695,12 @@ When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* wo
 - Keep backup and restore logic separate so restore can reconstruct the same Hermes home/profile layout without changing the backup path.
 - Restore workflows should support selecting an older git ref and a dry run before writing files.
 - Backup scripts should emit a simple status contract for automation (`STATUS: PUSHED` / `STATUS: NO_CHANGES`).
+- Cron script paths are validated relative to `HERMES_HOME/scripts/`; use a real file there for scheduled jobs, not a symlink that resolves outside the directory.
+- If a backup wrapper lives in another Hermes-managed location, mirror it into `scripts/` as part of the backup state so restore round-trips scheduled jobs cleanly.
 
-See `references/github-backup-workflow.md` for the canonical scope, exclusions, and restore notes.
+- When you add cron wrapper scripts, mirror `scripts/` as part of the backup/restore round trip so the scheduled job survives restores.
+
+See `references/github-backup-workflow.md` for the canonical scope, exclusions, and restore notes, and `references/cron-backup-script-path.md` for the cron wrapper path pitfall.
 
 ### Curator (skill lifecycle)
 

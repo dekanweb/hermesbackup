@@ -14,4 +14,4 @@ In this Hermes environment, the main Hermes-related persistent data paths are /o
 §
 The Hermes GitHub backup mirror now stores Hermes-related state under repo-local state/: /opt/data/.hermes, /opt/data/skills, /opt/data/cron, /opt/data/sessions, /opt/data/memories, plus /opt/data/config.yaml, /opt/data/channel_directory.json, /opt/data/SOUL.md, and /opt/data/.skills_prompt_snapshot.json. The repo includes ./backup.sh to push snapshots and ./restore.sh (with --ref and --dry-run) to restore an older backup from git history. Secrets such as .env, auth.json, .ssh, pid/lock files, and caches remain excluded.
 §
-In this Hermes environment, HERMES_HOME and HOME are /opt/data, so cron script paths resolve under /opt/data/scripts; backup wrapper scripts may also exist under /opt/data/.hermes/scripts, and a symlink or copy into /opt/data/scripts is needed for cron jobs to find them.
+In this Hermes environment, HERMES_HOME and HOME are /opt/data, so cron script paths resolve under /opt/data/scripts; backup wrapper scripts must be real files there because cron blocks symlinks that resolve outside the scripts directory.
