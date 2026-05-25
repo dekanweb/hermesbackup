@@ -17,3 +17,5 @@ User wants the note system to support mixed use cases through conversation: comp
 User wants Obsidian and Notion to coexist as separate destinations, and may explicitly specify per item whether it should be added to Obsidian or Notion.
 §
 User does not want to use Notion for now and prefers to cancel that setup.
+§
+Kullanıcı, çözüm üretirken kod çıktısı/vermesi yerine doğrudan aksiyon alınmasını (yedeklemeyi düzenleyip yeniden başlatmak gibi) tercih ediyor; kod paylaşımı istemiyor.

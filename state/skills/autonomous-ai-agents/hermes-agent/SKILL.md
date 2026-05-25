@@ -676,13 +676,13 @@ When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* wo
 - Mirror the durable Hermes state, not task progress or transient logs.
 - If the user is using a filesystem-first Obsidian vault managed through Hermes conversation, include the vault directory itself in the mirrored state and restore mapping. In this environment the active vault path is `/opt/data/Documents/Obsidian Vault`, mirrored as repo-local `state/obsidian-vault/` and restored back to `Documents/Obsidian Vault/`.
 - In this environment, the backup scope is the repo-local `state/` mirror of:
-- In this environment, the backup scope is the repo-local `state/` mirror of:
   - `.hermes/`
   - `skills/`
   - `cron/`
   - `scripts/`
-  - `sessions/`
   - `memories/`
+  - `Documents/Obsidian Vault/` (vault)
+- **Deliberately excluded:** `sessions/` (session transcripts may contain secrets and can trigger GitHub Push Protection). See `references/github-backup-workflow.md` 1 GitHub push protection.
   - `config.yaml`
   - `channel_directory.json`
   - `SOUL.md`

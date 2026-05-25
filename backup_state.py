@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
@@ -31,7 +32,8 @@ SOURCE_DIRS = [
     (SOURCE_ROOT / "skills", "skills"),
     (SOURCE_ROOT / "cron", "cron"),
     (SOURCE_ROOT / "scripts", "scripts"),
-    # sessions are excluded from backups because they may contain API tokens / secrets
+    # Sessions ARE backed up, but secrets are scrubbed during copy.
+    (SOURCE_ROOT / "sessions", "sessions"),
     (SOURCE_ROOT / "memories", "memories"),
     (SOURCE_ROOT / "Documents" / "Obsidian Vault", "obsidian-vault"),
 ]
@@ -49,7 +51,6 @@ EXCLUDED_DIR_NAMES = {
     ".venv",
     "venv",
     "env",
-    "sessions",
 }
 
 EXCLUDED_FILE_NAMES = {
@@ -77,6 +78,29 @@ EXCLUDED_SUFFIXES = (
     ".pem",
     ".token",
 )
+
+
+# Common secret patterns to scrub from backed-up text (especially sessions).
+# Goal: keep conversation history while preventing GitHub push-protection blocks.
+SCRUB_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    # Notion tokens often appear as `secret_...`
+    (re.compile(r"secret_[A-Za-z0-9_\-]{8,}"), "secret_[REDACTED]"),
+    # OpenAI-style keys
+    (re.compile(r"sk-[A-Za-z0-9]{16,}"), "sk-[REDACTED]"),
+    # Google OAuth access/refresh tokens
+    (re.compile(r"ya29\.[A-Za-z0-9_\-]+"), "ya29.[REDACTED]"),
+    # Generic bearer tokens in JSON/logs
+    (re.compile(r"(?i)\bBearer\s+[A-Za-z0-9_\-\.]{16,}"), "Bearer [REDACTED]"),
+    # Private keys blocks
+    (re.compile(r"-----BEGIN [A-Z ]+PRIVATE KEY-----[\s\S]+?-----END [A-Z ]+PRIVATE KEY-----"), "-----BEGIN PRIVATE KEY-----\n[REDACTED]\n-----END PRIVATE KEY-----"),
+]
+
+
+def scrub_text(text: str) -> str:
+    out = text
+    for pattern, repl in SCRUB_PATTERNS:
+        out = pattern.sub(repl, out)
+    return out
 
 
 @dataclass
@@ -107,7 +131,30 @@ def remove_existing(path: Path) -> None:
 
 
 def copy_file(src: Path, dst: Path) -> None:
+    """Copy a file to dst.
+
+    For session transcripts, scrub common secret patterns before writing.
+    This preserves conversation history while reducing secret-scanning blocks.
+    """
     dst.parent.mkdir(parents=True, exist_ok=True)
+
+    # Scrub text only for session files (which may contain tool outputs / tokens).
+    if "sessions" in src.parts:
+        try:
+            raw = src.read_bytes()
+            text = raw.decode("utf-8")
+        except Exception:
+            shutil.copy2(src, dst)
+            return
+
+        scrubbed = scrub_text(text)
+        dst.write_text(scrubbed, encoding="utf-8")
+        try:
+            shutil.copystat(src, dst)
+        except Exception:
+            pass
+        return
+
     shutil.copy2(src, dst)
 
 
