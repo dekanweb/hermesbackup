@@ -396,6 +396,8 @@ Full config reference: https://hermes-agent.nousresearch.com/docs/user-guide/con
 
 Gemini-specific setup notes and provider distinctions are in `references/gemini-provider-setup.md`.
 
+If the user runs Hermes Agent inside a Docker container (common on VPS panels like Hostinger), also see `references/gemini-api-key-docker-hostinger.md` for a safe, copy/paste-friendly way to add `GOOGLE_API_KEY` to the container's `/opt/data/.env` even when minimal images lack `nano`.
+
 Full provider docs: https://hermes-agent.nousresearch.com/docs/integrations/providers
 
 ### Toolsets
@@ -672,6 +674,7 @@ User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
 When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* workflow, not just a repo sync.
 
 - Mirror the durable Hermes state, not task progress or transient logs.
+- If the user is using a filesystem-first Obsidian vault managed through Hermes conversation, include the vault directory itself in the mirrored state and restore mapping. In this environment the active vault path is `/opt/data/Documents/Obsidian Vault`, mirrored as repo-local `state/obsidian-vault/` and restored back to `Documents/Obsidian Vault/`.
 - In this environment, the backup scope is the repo-local `state/` mirror of:
 - In this environment, the backup scope is the repo-local `state/` mirror of:
   - `.hermes/`

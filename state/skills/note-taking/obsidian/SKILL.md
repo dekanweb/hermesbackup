@@ -8,11 +8,30 @@ platforms: [linux, macos, windows]
 
 Use this skill for filesystem-first Obsidian vault work: reading notes, listing notes, searching note files, creating notes, appending content, and adding wikilinks.
 
+## Assistant-managed usage and portability
+
+Obsidian vaults are plain folders of markdown files, not a closed database. If the user wants Hermes to manage notes conversationally, a GUI and Obsidian account are not required for day-to-day capture, organization, search, and planning.
+
+Treat the vault folder itself as the portable/exportable unit:
+- copying the vault directory is effectively export
+- opening that directory in Obsidian elsewhere is effectively import
+- iPhone or desktop use later requires only that the vault be synchronized into a location that device can access
+
+If the user has a generic Hermes GitHub backup workflow, include the vault directory in that mirrored backup scope so new notes/subfolders are captured automatically without per-folder requests.
+
 ## Vault path
 
 Use a known or resolved vault path before calling file tools.
 
 The documented vault-path convention is the `OBSIDIAN_VAULT_PATH` environment variable, for example from `~/.hermes/.env`. If it is unset, use `~/Documents/Obsidian Vault`.
+
+If the vault path contains spaces and the `.env` file may be sourced by a shell, quote the value in `.env`, for example:
+
+```bash
+OBSIDIAN_VAULT_PATH="/opt/data/Documents/Obsidian Vault"
+```
+
+Without quotes, shell-sourcing the env file can mis-parse the path and break downstream commands even though file tools can still use the raw absolute path.
 
 File tools do not expand shell variables. Do not pass paths containing `$OBSIDIAN_VAULT_PATH` to `read_file`, `write_file`, `patch`, or `search_files`; resolve the vault path first and pass a concrete absolute path. Vault paths may contain spaces, which is another reason to prefer file tools over shell commands.
 

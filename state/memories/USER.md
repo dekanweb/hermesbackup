@@ -13,3 +13,7 @@ User prefers Telegram conversations in Hermes Agent to use Gemini models by defa
 User wants to use Hermes through conversation for note-taking and future planning, with Obsidian-style filesystem notes managed by the assistant.
 §
 User wants the note system to support mixed use cases through conversation: competitor Instagram accounts, brand-specific price lists, multiple brands, and personal life notes.
+§
+User wants Obsidian and Notion to coexist as separate destinations, and may explicitly specify per item whether it should be added to Obsidian or Notion.
+§
+User does not want to use Notion for now and prefers to cancel that setup.

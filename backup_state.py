@@ -31,7 +31,7 @@ SOURCE_DIRS = [
     (SOURCE_ROOT / "skills", "skills"),
     (SOURCE_ROOT / "cron", "cron"),
     (SOURCE_ROOT / "scripts", "scripts"),
-    (SOURCE_ROOT / "sessions", "sessions"),
+    # sessions are excluded from backups because they may contain API tokens / secrets
     (SOURCE_ROOT / "memories", "memories"),
     (SOURCE_ROOT / "Documents" / "Obsidian Vault", "obsidian-vault"),
 ]
@@ -49,6 +49,7 @@ EXCLUDED_DIR_NAMES = {
     ".venv",
     "venv",
     "env",
+    "sessions",
 }
 
 EXCLUDED_FILE_NAMES = {

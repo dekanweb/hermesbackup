@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-05-25T12:39:30.301019+00:00",
+  "created_at": "2026-05-25T16:10:06.971574+00:00",
   "exclusions": {
     "directories": [
       ".git",
@@ -13,6 +13,7 @@
       "dist",
       "env",
       "node_modules",
+      "sessions",
       "venv"
     ],
     "files": [
@@ -58,10 +59,6 @@
       "source": "/opt/data/scripts"
     },
     {
-      "dest": "sessions",
-      "source": "/opt/data/sessions"
-    },
-    {
       "dest": "memories",
       "source": "/opt/data/memories"
     },
@@ -78,8 +75,8 @@
   "source_root": "/opt/data",
   "stats": {
     "copied_dirs": 219,
-    "copied_files": 637,
+    "copied_files": 579,
     "skipped_dirs": 0,
-    "skipped_files": 4
+    "skipped_files": 5
   }
 }
