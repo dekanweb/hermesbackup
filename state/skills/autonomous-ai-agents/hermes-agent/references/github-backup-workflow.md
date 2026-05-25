@@ -7,9 +7,10 @@ Mirror Hermes state that matters across sessions:
 - `~/.hermes/` or the profile-equivalent Hermes home
 - `skills/`
 - `cron/`
-- `sessions/`
 - `memories/`
 - top-level config/state files such as `config.yaml`, `channel_directory.json`, `SOUL.md`, and `.skills_prompt_snapshot.json`
+
+**Important:** avoid backing up `sessions/` by default. Session transcripts can accidentally contain API tokens (e.g. Notion/Google tokens echoed in tool output). If you truly need sessions for forensics, implement a redaction/scrub step before mirroring them.
 
 ## Exclusions
 Do **not** back up secrets or runtime junk:
@@ -24,9 +25,20 @@ Do **not** back up secrets or runtime junk:
 - Use SSH deploy keys or equivalent repo-scoped access, ideally a repo-specific Ed25519 key with write access.
 - Keep the private key local only; do not mirror `.ssh/` into the backup tree.
 - Manual trigger phrases can be mapped to a backup action when the user has established one; in this session the phrase is **"şimdi yedek al"**.
+- When the user asks to run a backup, **run it** and report success/failure; avoid dumping implementation code unless explicitly requested.
 - Backups should capture the live persistent state, not task progress or transient logs.
 - A useful automation contract is `STATUS: PUSHED` or `STATUS: NO_CHANGES`.
 - In this environment, the backup mirror stores Hermes state under repo-local `state/`.
+
+## GitHub push protection (GH013) / secret scanning blocks
+If `git push` fails with GH013 / “Push cannot contain secrets”:
+1) Identify the flagged paths (GitHub error includes `state/...` file locations).
+2) **Remove the secret from the backup payload** (best: exclude the risky directory such as `sessions/` from mirroring; or scrub/redact before commit).
+3) **Rewrite local history** so the blocked commit is no longer present (e.g., reset the backup workdir to `origin/main`), then re-run the backup so it creates a fresh clean commit.
+
+Notes:
+- Adding exclusions only fixes future commits; it does not remove a secret already present in an unpushed local commit.
+- The unblock URL is an option, but default posture should be to remove the secret from history rather than allow it.
 
 ## Restore notes
 - A restore should be able to reconstruct the same state layout from the repo mirror.
