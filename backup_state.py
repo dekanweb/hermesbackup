@@ -83,8 +83,9 @@ EXCLUDED_SUFFIXES = (
 # Common secret patterns to scrub from backed-up text (especially sessions).
 # Goal: keep conversation history while preventing GitHub push-protection blocks.
 SCRUB_PATTERNS: list[tuple[re.Pattern[str], str]] = [
-    # Notion tokens often appear as `secret_...`
+    # Notion tokens often appear as `secret_...` or `ntn_...`
     (re.compile(r"secret_[A-Za-z0-9_\-]{8,}"), "secret_[REDACTED]"),
+    (re.compile(r"ntn_[A-Za-z0-9]{8,}"), "ntn_[REDACTED]"),
     # OpenAI-style keys
     (re.compile(r"sk-[A-Za-z0-9]{16,}"), "sk-[REDACTED]"),
     # Google OAuth access/refresh tokens

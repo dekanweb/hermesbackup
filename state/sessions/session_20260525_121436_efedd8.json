@@ -2465,7 +2465,7 @@
     },
     {
       "role": "user",
-      "content": "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"
+      "content": "ntn_[REDACTED]"
     },
     {
       "role": "assistant",
@@ -2519,7 +2519,7 @@
           "type": "function",
           "function": {
             "name": "terminal",
-            "arguments": "{\"command\":\"python3 - <<'PY'\\nimport os, json, urllib.request\\nkey = \\\"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\\\"\\nreq = urllib.request.Request(\\n    'https://api.notion.com/v1/users/me',\\n    headers={\\n        'Authorization': f'Bearer {key}',\\n        'Notion-Version': '2025-09-03',\\n        'Content-Type': 'application/json',\\n    },\\n)\\ntry:\\n    with urllib.request.urlopen(req, timeout=30) as r:\\n        data = json.load(r)\\n    print(json.dumps({'ok': True, 'object': data.get('object'), 'type': data.get('type'), 'name': data.get('name'), 'bot_owner_type': data.get('bot', {}).get('owner', {}).get('type')}, ensure_ascii=False))\\nexcept Exception as e:\\n    print(json.dumps({'ok': False, 'error': str(e)}))\\nPY\",\"timeout\":60}"
+            "arguments": "{\"command\":\"python3 - <<'PY'\\nimport os, json, urllib.request\\nkey = \\\"ntn_[REDACTED]\\\"\\nreq = urllib.request.Request(\\n    'https://api.notion.com/v1/users/me',\\n    headers={\\n        'Authorization': f'Bearer {key}',\\n        'Notion-Version': '2025-09-03',\\n        'Content-Type': 'application/json',\\n    },\\n)\\ntry:\\n    with urllib.request.urlopen(req, timeout=30) as r:\\n        data = json.load(r)\\n    print(json.dumps({'ok': True, 'object': data.get('object'), 'type': data.get('type'), 'name': data.get('name'), 'bot_owner_type': data.get('bot', {}).get('owner', {}).get('type')}, ensure_ascii=False))\\nexcept Exception as e:\\n    print(json.dumps({'ok': False, 'error': str(e)}))\\nPY\",\"timeout\":60}"
           }
         }
       ]
@@ -2578,7 +2578,7 @@
           "type": "function",
           "function": {
             "name": "patch",
-            "arguments": "{\"mode\":\"replace\",\"path\":\"/opt/data/.hermes/.env\",\"old_string\":\"OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\n\",\"new_string\":\"OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\nNOTION_API_KEY=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\\n\"}"
+            "arguments": "{\"mode\":\"replace\",\"path\":\"/opt/data/.hermes/.env\",\"old_string\":\"OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\n\",\"new_string\":\"OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\nNOTION_API_KEY=ntn_[REDACTED]\\n\"}"
           }
         }
       ]
@@ -2586,7 +2586,7 @@
     {
       "role": "tool",
       "name": "patch",
-      "content": "{\"success\": true, \"diff\": \"--- a//opt/data/.hermes/.env\\n+++ b//opt/data/.hermes/.env\\n@@ -1 +1,2 @@\\n OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\n+NOTION_API_KEY=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\\n\", \"files_modified\": [\"/opt/data/.hermes/.env\"], \"lint\": {\"status\": \"skipped\", \"message\": \"No linter for  files\"}}",
+      "content": "{\"success\": true, \"diff\": \"--- a//opt/data/.hermes/.env\\n+++ b//opt/data/.hermes/.env\\n@@ -1 +1,2 @@\\n OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\n+NOTION_API_KEY=ntn_[REDACTED]\\n\", \"files_modified\": [\"/opt/data/.hermes/.env\"], \"lint\": {\"status\": \"skipped\", \"message\": \"No linter for  files\"}}",
       "tool_call_id": "call_QEu6SeewvzbG8EvhQHA4JdcE"
     },
     {
@@ -2702,7 +2702,7 @@
     {
       "role": "tool",
       "name": "patch",
-      "content": "{\"success\": true, \"diff\": \"--- a//opt/data/.hermes/.env\\n+++ b//opt/data/.hermes/.env\\n@@ -1,2 +1,2 @@\\n-OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\n+OBSIDIAN_VAULT_PATH=\\\"/opt/data/Documents/Obsidian Vault\\\"\\n NOTION_API_KEY=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\\n\", \"files_modified\": [\"/opt/data/.hermes/.env\"], \"lint\": {\"status\": \"skipped\", \"message\": \"No linter for  files\"}}",
+      "content": "{\"success\": true, \"diff\": \"--- a//opt/data/.hermes/.env\\n+++ b//opt/data/.hermes/.env\\n@@ -1,2 +1,2 @@\\n-OBSIDIAN_VAULT_PATH=/opt/data/Documents/Obsidian Vault\\n+OBSIDIAN_VAULT_PATH=\\\"/opt/data/Documents/Obsidian Vault\\\"\\n NOTION_API_KEY=ntn_[REDACTED]\\n\", \"files_modified\": [\"/opt/data/.hermes/.env\"], \"lint\": {\"status\": \"skipped\", \"message\": \"No linter for  files\"}}",
       "tool_call_id": "call_pGfqPzLfzkmqcNZWe6VR89dA"
     },
     {
@@ -2993,7 +2993,7 @@
           "type": "function",
           "function": {
             "name": "patch",
-            "arguments": "{\"mode\":\"replace\",\"path\":\"/opt/data/.hermes/.env\",\"old_string\":\"NOTION_API_KEY=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\\n\",\"new_string\":\"\"}"
+            "arguments": "{\"mode\":\"replace\",\"path\":\"/opt/data/.hermes/.env\",\"old_string\":\"NOTION_API_KEY=ntn_[REDACTED]\\n\",\"new_string\":\"\"}"
           }
         },
         {
@@ -3011,7 +3011,7 @@
     {
       "role": "tool",
       "name": "patch",
-      "content": "{\"success\": true, \"diff\": \"--- a//opt/data/.hermes/.env\\n+++ b//opt/data/.hermes/.env\\n@@ -1,2 +1 @@\\n OBSIDIAN_VAULT_PATH=\\\"/opt/data/Documents/Obsidian Vault\\\"\\n-NOTION_API_KEY=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\\n\", \"files_modified\": [\"/opt/data/.hermes/.env\"], \"lint\": {\"status\": \"skipped\", \"message\": \"No linter for  files\"}}",
+      "content": "{\"success\": true, \"diff\": \"--- a//opt/data/.hermes/.env\\n+++ b//opt/data/.hermes/.env\\n@@ -1,2 +1 @@\\n OBSIDIAN_VAULT_PATH=\\\"/opt/data/Documents/Obsidian Vault\\\"\\n-NOTION_API_KEY=ntn_[REDACTED]\\n\", \"files_modified\": [\"/opt/data/.hermes/.env\"], \"lint\": {\"status\": \"skipped\", \"message\": \"No linter for  files\"}}",
       "tool_call_id": "call_jTvUirYdUihde8vFfnMI8HrP"
     },
     {
