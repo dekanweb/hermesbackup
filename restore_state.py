@@ -32,6 +32,7 @@ STATE_MAP = [
     ("scripts", "scripts"),
     ("sessions", "sessions"),
     ("memories", "memories"),
+    ("obsidian-vault", "Documents/Obsidian Vault"),
 ]
 
 ROOT_FILES = [

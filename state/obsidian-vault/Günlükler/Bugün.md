@@ -1,0 +1,10 @@
+# Bugün
+
+## Odak
+- 
+
+## Yapılacaklar
+- 
+
+## Notlar
+- 

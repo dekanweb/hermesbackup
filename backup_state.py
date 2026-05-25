@@ -33,6 +33,7 @@ SOURCE_DIRS = [
     (SOURCE_ROOT / "scripts", "scripts"),
     (SOURCE_ROOT / "sessions", "sessions"),
     (SOURCE_ROOT / "memories", "memories"),
+    (SOURCE_ROOT / "Documents" / "Obsidian Vault", "obsidian-vault"),
 ]
 
 EXCLUDED_DIR_NAMES = {

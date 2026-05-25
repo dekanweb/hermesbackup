@@ -30,6 +30,26 @@ When asked to install Obsidian on Linux and the normal package route is unavaila
 
 If a GUI still cannot start because the host lacks desktop services, stop at the portable-install boundary and report that the app files are installed even if the full UI cannot be launched in that environment.
 
+## Assistant-managed use without GUI
+
+A GUI is not required when the user wants the assistant to manage notes through conversation. For filesystem-first workflows, the assistant can create, search, edit, and organize vault notes directly with file tools while the user interacts only via chat.
+
+This is a good fit for mixed-use vaults that combine business and personal material, such as:
+- competitor lists and social accounts for a brand
+- brand-specific price tracking and competitor pricing
+- multiple brands in parallel
+- personal planning, life notes, and future design
+
+When bootstrapping a vault for this pattern, prefer a lightweight top-level structure the assistant can route notes into immediately, for example:
+- `Inbox/` for quick capture
+- `Planlama/` or `Planning/` for future design and goals
+- `Projeler/` for active brand or work streams
+- `Alanlar/` for ongoing life/business areas
+- `Kaynaklar/` for references
+- `Templates/` for reusable note shells
+
+If the user later wants to open the same vault on iPhone, explain that the vault contents must be synchronized to a location the phone can access, such as Obsidian Sync or iCloud Drive. The vault being manageable by the assistant does not imply it is automatically reachable from the phone.
+
 ## Read a note
 
 Use `read_file` with the resolved absolute path to the note. Prefer this over `cat` because it provides line numbers and pagination.
