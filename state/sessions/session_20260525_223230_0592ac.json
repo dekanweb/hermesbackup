@@ -1,461 +1,12 @@
 {
-  "session_id": "20260525_120444_942b2169",
+  "session_id": "20260525_223230_0592ac",
   "model": "gpt-5.4-mini",
   "base_url": "https://chatgpt.com/backend-api/codex",
   "platform": "telegram",
-  "session_start": "2026-05-25T22:19:29.792100",
-  "last_updated": "2026-05-25T22:33:59.637821",
-  "system_prompt": "You are Hermes Agent, an intelligent AI assistant created by Nous Research. You are helpful, knowledgeable, and direct. You assist users with a wide range of tasks including answering questions, writing and editing code, analyzing information, creative work, and executing actions via your tools. You communicate clearly, admit uncertainty when appropriate, and prioritize being genuinely useful over being verbose unless otherwise directed below. Be targeted and efficient in your exploration and investigations.\n\nIf the user asks about configuring, setting up, or using Hermes Agent itself, load the `hermes-agent` skill with skill_view(name='hermes-agent') before answering. Docs: https://hermes-agent.nousresearch.com/docs\n\nYou have persistent memory across sessions. Save durable facts using the memory tool: user preferences, environment details, tool quirks, and stable conventions. Memory is injected into every turn, so keep it compact and focused on facts that will still matter later.\nPrioritize what reduces future user steering — the most valuable memory is one that prevents the user from having to correct or remind you again. User preferences and recurring corrections matter more than procedural task details.\nDo NOT save task progress, session outcomes, completed-work logs, or temporary TODO state to memory; use session_search to recall those from past transcripts. Specifically: do not record PR numbers, issue numbers, commit SHAs, 'fixed bug X', 'submitted PR Y', 'Phase N done', file counts, or any artifact that will be stale in 7 days. If a fact will be stale in a week, it does not belong in memory. If you've discovered a new way to do something, solved a problem that could be necessary later, save it as a skill with the skill tool.\nWrite memories as declarative facts, not instructions to yourself. 'User prefers concise responses' ✓ — 'Always respond concisely' ✗. 'Project uses pytest with xdist' ✓ — 'Run tests with pytest -n 4' ✗. Imperative phrasing gets re-read as a directive in later sessions and can cause repeated work or override the user's current request. Procedures and workflows belong in skills, not memory. When the user references something from a past conversation or you suspect relevant cross-session context exists, use session_search to recall it before asking them to repeat themselves. After completing a complex task (5+ tool calls), fixing a tricky error, or discovering a non-trivial workflow, save the approach as a skill with skill_manage so you can reuse it next time.\nWhen using a skill and finding it outdated, incomplete, or wrong, patch it immediately with skill_manage(action='patch') — don't wait to be asked. Skills that aren't maintained become liabilities.\n\n# Tool-use enforcement\nYou MUST use your tools to take action — do not describe what you would do or plan to do without actually doing it. When you say you will perform an action (e.g. 'I will run the tests', 'Let me check the file', 'I will create the project'), you MUST immediately make the corresponding tool call in the same response. Never end your turn with a promise of future action — execute it now.\nKeep working until the task is actually complete. Do not stop with a summary of what you plan to do next time. If you have tools available that can accomplish the task, use them instead of telling the user what you would do.\nEvery response should either (a) contain tool calls that make progress, or (b) deliver a final result to the user. Responses that only describe intentions without acting are not acceptable.\n\n# Google model operational directives\nFollow these operational rules strictly:\n- **Absolute paths:** Always construct and use absolute file paths for all file system operations. Combine the project root with relative paths.\n- **Verify first:** Use read_file/search_files to check file contents and project structure before making changes. Never guess at file contents.\n- **Dependency checks:** Never assume a library is available. Check package.json, requirements.txt, Cargo.toml, etc. before importing.\n- **Conciseness:** Keep explanatory text brief — a few sentences, not paragraphs. Focus on actions and results over narration.\n- **Parallel tool calls:** When you need to perform multiple independent operations (e.g. reading several files), make all the tool calls in a single response rather than sequentially.\n- **Non-interactive commands:** Use flags like -y, --yes, --non-interactive to prevent CLI tools from hanging on prompts.\n- **Keep going:** Work autonomously until the task is fully resolved. Don't stop with a plan — execute it.\n\n## Skills (mandatory)\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading — it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge — API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing — load them even for tasks you already know how to do, because the skill defines how it should be done here.\nWhenever the user asks you to configure, set up, install, enable, disable, modify, or troubleshoot Hermes Agent itself — its CLI, config, models, providers, tools, skills, voice, gateway, plugins, or any feature — load the `hermes-agent` skill first. It has the actual commands (e.g. `hermes config set …`, `hermes tools`, `hermes setup`) so you don't have to guess or invent workarounds.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  autonomous-ai-agents: Skills for spawning and orchestrating autonomous AI coding agents and multi-agent workflows — running independent agent processes, delegating tasks, and coordinating parallel workstreams.\n    - claude-code: Delegate coding to Claude Code CLI (features, PRs).\n    - codex: Delegate coding to OpenAI Codex CLI (features, PRs).\n    - hermes-agent: Configure, extend, or contribute to Hermes Agent.\n    - opencode: Delegate coding to OpenCode CLI (features, PR review).\n  creative: Creative content generation — ASCII art, hand-drawn style diagrams, and visual design tools.\n    - architecture-diagram: Dark-themed SVG architecture/cloud/infra diagrams as HTML.\n    - ascii-art: ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\n    - ascii-video: ASCII video: convert video/audio to colored ASCII MP4/GIF.\n    - baoyu-comic: Knowledge comics (知识漫画): educational, biography, tutorial.\n    - baoyu-infographic: Infographics: 21 layouts x 21 styles (信息图, 可视化).\n    - claude-design: Design one-off HTML artifacts (landing, deck, prototype).\n    - comfyui: Generate images, video, and audio with ComfyUI — install,...\n    - design-md: Author/validate/export Google's DESIGN.md token spec files.\n    - excalidraw: Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\n    - humanizer: Humanize text: strip AI-isms and add real voice.\n    - ideation: Generate project ideas via creative constraints.\n    - manim-video: Manim CE animations: 3Blue1Brown math/algo videos.\n    - p5js: p5.js sketches: gen art, shaders, interactive, 3D.\n    - pixel-art: Pixel art w/ era palettes (NES, Game Boy, PICO-8).\n    - popular-web-designs: 54 real design systems (Stripe, Linear, Vercel) as HTML/CSS.\n    - pretext: Use when building creative browser demos with @chenglou/p...\n    - sketch: Throwaway HTML mockups: 2-3 design variants to compare.\n    - songwriting-and-ai-music: Songwriting craft and Suno AI music prompts.\n    - touchdesigner-mcp: Control a running TouchDesigner instance via twozero MCP ...\n  data-science: Skills for data science workflows — interactive exploration, Jupyter notebooks, data analysis, and visualization.\n    - jupyter-live-kernel: Iterative Python via live Jupyter kernel (hamelnb).\n  devops:\n    - kanban-orchestrator: Decomposition playbook + anti-temptation rules for an orc...\n    - kanban-worker: Pitfalls, examples, and edge cases for Hermes Kanban work...\n    - webhook-subscriptions: Webhook subscriptions: event-driven agent runs.\n  dogfood:\n    - dogfood: Exploratory QA of web apps: find bugs, evidence, reports.\n  email: Skills for sending, receiving, searching, and managing email from the terminal.\n    - himalaya: Himalaya CLI: IMAP/SMTP email from terminal.\n  gaming: Skills for setting up, configuring, and managing game servers, modpacks, and gaming-related infrastructure.\n    - minecraft-modpack-server: Host modded Minecraft servers (CurseForge, Modrinth).\n    - pokemon-player: Play Pokemon via headless emulator + RAM reads.\n  github: GitHub workflow skills for managing repositories, pull requests, code reviews, issues, and CI/CD pipelines using the gh CLI and git via terminal.\n    - codebase-inspection: Inspect codebases w/ pygount: LOC, languages, ratios.\n    - github-auth: GitHub auth setup: HTTPS tokens, SSH keys, gh CLI login.\n    - github-code-review: Review PRs: diffs, inline comments via gh or REST.\n    - github-issues: Create, triage, label, assign GitHub issues via gh or REST.\n    - github-pr-workflow: GitHub PR lifecycle: branch, commit, open, CI, merge.\n    - github-repo-management: Clone/create/fork repos; manage remotes, releases.\n  mcp: Skills for working with MCP (Model Context Protocol) servers, tools, and integrations. Documents the built-in native MCP client — configure servers in config.yaml for automatic tool discovery.\n    - native-mcp: MCP client: connect servers, register tools (stdio/HTTP).\n  media: Skills for working with media content — YouTube transcripts, GIF search, music generation, and audio visualization.\n    - gif-search: Search/download GIFs from Tenor via curl + jq.\n    - heartmula: HeartMuLa: Suno-like song generation from lyrics + tags.\n    - songsee: Audio spectrograms/features (mel, chroma, MFCC) via CLI.\n    - spotify: Spotify: play, search, queue, manage playlists and devices.\n    - youtube-content: YouTube transcripts to summaries, threads, blogs.\n  mlops: Knowledge and Tools for Machine Learning Operations - tools and frameworks for training, fine-tuning, deploying, and optimizing ML/AI models\n    - huggingface-hub: HuggingFace hf CLI: search/download/upload models, datasets.\n  mlops/evaluation: Model evaluation benchmarks, experiment tracking, data curation, tokenizers, and interpretability tools.\n    - evaluating-llms-harness: lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\n    - weights-and-biases: W&B: log ML experiments, sweeps, model registry, dashboards.\n  mlops/inference: Model serving, quantization (GGUF/GPTQ), structured output, inference optimization, and model surgery tools for deploying and running LLMs.\n    - llama-cpp: llama.cpp local GGUF inference + HF Hub model discovery.\n    - obliteratus: OBLITERATUS: abliterate LLM refusals (diff-in-means).\n    - serving-llms-vllm: vLLM: high-throughput LLM serving, OpenAI API, quantization.\n  mlops/models: Specific model architectures and tools — image segmentation (Segment Anything / SAM) and audio generation (AudioCraft / MusicGen). Additional model skills (CLIP, Stable Diffusion, Whisper, LLaVA) are available as optional skills.\n    - audiocraft-audio-generation: AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\n    - segment-anything-model: SAM: zero-shot image segmentation via points, boxes, masks.\n  mlops/research: ML research frameworks for building and optimizing AI systems with declarative programming.\n    - dspy: DSPy: declarative LM programs, auto-optimize prompts, RAG.\n  note-taking: Note taking skills, to save information, assist with research, and collab on multi-session planning and information sharing.\n    - obsidian: Read, search, create, and edit notes in the Obsidian vault.\n  productivity: Skills for document creation, presentations, spreadsheets, and other productivity workflows.\n    - airtable: Airtable REST API via curl. Records CRUD, filters, upserts.\n    - google-workspace: Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\n    - linear: Linear: manage issues, projects, teams via GraphQL + curl.\n    - maps: Geocode, POIs, routes, timezones via OpenStreetMap/OSRM.\n    - nano-pdf: Edit PDF text/typos/titles via nano-pdf CLI (NL prompts).\n    - notion: Notion API via curl: pages, databases, blocks, search.\n    - ocr-and-documents: Extract text from PDFs/scans (pymupdf, marker-pdf).\n    - powerpoint: Create, read, edit .pptx decks, slides, notes, templates.\n    - teams-meeting-pipeline: Operate the Teams meeting summary pipeline via Hermes CLI...\n  red-teaming:\n    - godmode: Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\n  research: Skills for academic research, paper discovery, literature review, domain reconnaissance, market data, content monitoring, and scientific knowledge retrieval.\n    - arxiv: Search arXiv papers by keyword, author, category, or ID.\n    - blogwatcher: Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\n    - llm-wiki: Karpathy's LLM Wiki: build/query interlinked markdown KB.\n    - polymarket: Query Polymarket: markets, prices, orderbooks, history.\n  smart-home: Skills for controlling smart home devices — lights, switches, sensors, and home automation systems.\n    - openhue: Control Philips Hue lights, scenes, rooms via OpenHue CLI.\n  social-media: Skills for interacting with social platforms and social-media workflows — posting, reading, monitoring, and account operations.\n    - xurl: X/Twitter via xurl CLI: post, search, DM, media, v2 API.\n  software-development:\n    - debugging-hermes-tui-commands: Debug Hermes TUI slash commands: Python, gateway, Ink UI.\n    - hermes-agent-skill-authoring: Author in-repo SKILL.md: frontmatter, validator, structure.\n    - node-inspect-debugger: Debug Node.js via --inspect + Chrome DevTools Protocol CLI.\n    - plan: Plan mode: write markdown plan to .hermes/plans/, no exec.\n    - python-debugpy: Debug Python: pdb REPL + debugpy remote (DAP).\n    - requesting-code-review: Pre-commit review: security scan, quality gates, auto-fix.\n    - spike: Throwaway experiments to validate an idea before build.\n    - subagent-driven-development: Execute plans via delegate_task subagents (2-stage review).\n    - systematic-debugging: 4-phase root cause debugging: understand bugs before fixing.\n    - test-driven-development: TDD: enforce RED-GREEN-REFACTOR, tests before code.\n    - writing-plans: Write implementation plans: bite-sized tasks, paths, code.\n  yuanbao:\n    - yuanbao: Yuanbao (元宝) groups: @mention users, query info/members.\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task.\n\nHost: Linux (6.8.0-111-generic)\nUser home directory: /opt/data\nCurrent working directory: /opt/hermes\n\nYou are on a text messaging communication platform, Telegram. Standard markdown is automatically converted to Telegram format. Supported: **bold**, *italic*, ~~strikethrough~~, ||spoiler||, `inline code`, ```code blocks```, [links](url), and ## headers. Telegram has NO table syntax — prefer bullet lists or labeled key: value pairs over pipe tables (any tables you do emit are auto-rewritten into row-group bullets, which you can produce directly for cleaner output). You can send media files natively: to deliver a file to the user, include MEDIA:/absolute/path/to/file in your response. Images (.png, .jpg, .webp) appear as photos, audio (.ogg) sends as voice bubbles, and videos (.mp4) play inline. You can also include image URLs in markdown format ![alt](url) and they will be sent as native photos.\n\n══════════════════════════════════════════════\nMEMORY (your personal notes) [90% — 1,992/2,200 chars]\n══════════════════════════════════════════════\nThis Hermes environment runs inside Docker, and `hermes gateway install` reports that service installation is not needed inside a Docker container.\n§\nHermes config at /opt/data/config.yaml is set to use browser.cloud_provider: browser-use.\n§\nBu ortamda `hermes` CLI PATH'te değil; doğrudan `hermes` komutu çalışmıyor. `python3` mevcut (/usr/bin/python3, sürüm 3.13.5).\n§\nUser's GitHub backup repository is github.com/dekanweb/hermesbackup, used for Hermes backups.\n§\nUser backs up Hermes to the GitHub repo dekanweb/hermesbackup and prefers nightly automated backups via SSH deploy key.\n§\nIn this Hermes environment, the Python `mcp` package is not installed, and `/opt/data/config.yaml` currently has no `mcp_servers` configured.\n§\nIn this Hermes environment, the main Hermes-related persistent data paths are /opt/data/.hermes, /opt/data/skills, /opt/data/cron, /opt/data/sessions, /opt/data/memories, plus top-level files like /opt/data/config.yaml, /opt/data/channel_directory.json, /opt/data/SOUL.md, and /opt/data/.skills_prompt_snapshot.json. The backup workflow mirrors these into the GitHub backup repo and excludes secrets/runtime junk such as .env, auth.json, .ssh, lock files, pid files, and cache directories.\n§\nThe Hermes GitHub backup mirror now stores Hermes-related state under repo-local state/: /opt/data/.hermes, /opt/data/skills, /opt/data/cron, /opt/data/sessions, /opt/data/memories, plus /opt/data/config.yaml, /opt/data/channel_directory.json, /opt/data/SOUL.md, and /opt/data/.skills_prompt_snapshot.json. The repo includes ./backup.sh to push snapshots and ./restore.sh (with --ref and --dry-run) to restore an older backup from git history. Secrets such as .env, auth.json, .ssh, pid/lock files, and caches remain excluded.\n§\nIn this Hermes environment, HERMES_HOME and HOME are /opt/data, so cron script paths resolve under /opt/data/scripts; backup wrapper scripts must be real files there because cron blocks symlinks that resolve outside the scripts directory.\n\n══════════════════════════════════════════════\nUSER PROFILE (who the user is) [43% — 604/1,375 chars]\n══════════════════════════════════════════════\nUser prefers replies in Turkish.\n§\nUser prefers one-time GitHub backup setup and does not want repeated requests for email or similar credential details.\n§\nUser prefers Belgium/Europe-Brussels time for schedules and timestamps.\n§\nUser wants the phrase “şimdi yedek al” to mean triggering a manual Hermes GitHub backup on request.\n§\nUser wants to organize business documents in Google Drive and may keep the structure lightweight for now, with details remembered in the assistant rather than a separate complex system.\n§\nUser prefers Telegram conversations in Hermes Agent to use Gemini models by default.\n\nConversation started: Monday, May 25, 2026 12:04 PM\nModel: gemini-2.5-flash\nProvider: gemini",
+  "session_start": "2026-05-25T22:32:30.727753",
+  "last_updated": "2026-05-25T22:32:56.882098",
+  "system_prompt": "You are Hermes Agent, an intelligent AI assistant created by Nous Research. You are helpful, knowledgeable, and direct. You assist users with a wide range of tasks including answering questions, writing and editing code, analyzing information, creative work, and executing actions via your tools. You communicate clearly, admit uncertainty when appropriate, and prioritize being genuinely useful over being verbose unless otherwise directed below. Be targeted and efficient in your exploration and investigations.\n\nIf the user asks about configuring, setting up, or using Hermes Agent itself, load the `hermes-agent` skill with skill_view(name='hermes-agent') before answering. Docs: https://hermes-agent.nousresearch.com/docs\n\nYou have persistent memory across sessions. Save durable facts using the memory tool: user preferences, environment details, tool quirks, and stable conventions. Memory is injected into every turn, so keep it compact and focused on facts that will still matter later.\nPrioritize what reduces future user steering — the most valuable memory is one that prevents the user from having to correct or remind you again. User preferences and recurring corrections matter more than procedural task details.\nDo NOT save task progress, session outcomes, completed-work logs, or temporary TODO state to memory; use session_search to recall those from past transcripts. Specifically: do not record PR numbers, issue numbers, commit SHAs, 'fixed bug X', 'submitted PR Y', 'Phase N done', file counts, or any artifact that will be stale in 7 days. If a fact will be stale in a week, it does not belong in memory. If you've discovered a new way to do something, solved a problem that could be necessary later, save it as a skill with the skill tool.\nWrite memories as declarative facts, not instructions to yourself. 'User prefers concise responses' ✓ — 'Always respond concisely' ✗. 'Project uses pytest with xdist' ✓ — 'Run tests with pytest -n 4' ✗. Imperative phrasing gets re-read as a directive in later sessions and can cause repeated work or override the user's current request. Procedures and workflows belong in skills, not memory. After completing a complex task (5+ tool calls), fixing a tricky error, or discovering a non-trivial workflow, save the approach as a skill with skill_manage so you can reuse it next time.\nWhen using a skill and finding it outdated, incomplete, or wrong, patch it immediately with skill_manage(action='patch') — don't wait to be asked. Skills that aren't maintained become liabilities.\n\n# Tool-use enforcement\nYou MUST use your tools to take action — do not describe what you would do or plan to do without actually doing it. When you say you will perform an action (e.g. 'I will run the tests', 'Let me check the file', 'I will create the project'), you MUST immediately make the corresponding tool call in the same response. Never end your turn with a promise of future action — execute it now.\nKeep working until the task is actually complete. Do not stop with a summary of what you plan to do next time. If you have tools available that can accomplish the task, use them instead of telling the user what you would do.\nEvery response should either (a) contain tool calls that make progress, or (b) deliver a final result to the user. Responses that only describe intentions without acting are not acceptable.\n\n# Execution discipline\n<tool_persistence>\n- Use tools whenever they improve correctness, completeness, or grounding.\n- Do not stop early when another tool call would materially improve the result.\n- If a tool returns empty or partial results, retry with a different query or strategy before giving up.\n- Keep calling tools until: (1) the task is complete, AND (2) you have verified the result.\n</tool_persistence>\n\n<mandatory_tool_use>\nNEVER answer these from memory or mental computation — ALWAYS use a tool:\n- Arithmetic, math, calculations → use terminal or execute_code\n- Hashes, encodings, checksums → use terminal (e.g. sha256sum, base64)\n- Current time, date, timezone → use terminal (e.g. date)\n- System state: OS, CPU, memory, disk, ports, processes → use terminal\n- File contents, sizes, line counts → use read_file, search_files, or terminal\n- Git history, branches, diffs → use terminal\n- Current facts (weather, news, versions) → use web_search\nYour memory and user profile describe the USER, not the system you are running on. The execution environment may differ from what the user profile says about their personal setup.\n</mandatory_tool_use>\n\n<act_dont_ask>\nWhen a question has an obvious default interpretation, act on it immediately instead of asking for clarification. Examples:\n- 'Is port 443 open?' → check THIS machine (don't ask 'open where?')\n- 'What OS am I running?' → check the live system (don't use user profile)\n- 'What time is it?' → run `date` (don't guess)\nOnly ask for clarification when the ambiguity genuinely changes what tool you would call.\n</act_dont_ask>\n\n<prerequisite_checks>\n- Before taking an action, check whether prerequisite discovery, lookup, or context-gathering steps are needed.\n- Do not skip prerequisite steps just because the final action seems obvious.\n- If a task depends on output from a prior step, resolve that dependency first.\n</prerequisite_checks>\n\n<verification>\nBefore finalizing your response:\n- Correctness: does the output satisfy every stated requirement?\n- Grounding: are factual claims backed by tool outputs or provided context?\n- Formatting: does the output match the requested format or schema?\n- Safety: if the next step has side effects (file writes, commands, API calls), confirm scope before executing.\n</verification>\n\n<missing_context>\n- If required context is missing, do NOT guess or hallucinate an answer.\n- Use the appropriate lookup tool when missing information is retrievable (search_files, web_search, read_file, etc.).\n- Ask a clarifying question only when the information cannot be retrieved by tools.\n- If you must proceed with incomplete information, label assumptions explicitly.\n</missing_context>\n\n## Skills (mandatory)\nBefore replying, scan the skills below. If a skill matches or is even partially relevant to your task, you MUST load it with skill_view(name) and follow its instructions. Err on the side of loading — it is always better to have context you don't need than to miss critical steps, pitfalls, or established workflows. Skills contain specialized knowledge — API endpoints, tool-specific commands, and proven workflows that outperform general-purpose approaches. Load the skill even if you think you could handle the task with basic tools like web_search or terminal. Skills also encode the user's preferred approach, conventions, and quality standards for tasks like code review, planning, and testing — load them even for tasks you already know how to do, because the skill defines how it should be done here.\nWhenever the user asks you to configure, set up, install, enable, disable, modify, or troubleshoot Hermes Agent itself — its CLI, config, models, providers, tools, skills, voice, gateway, plugins, or any feature — load the `hermes-agent` skill first. It has the actual commands (e.g. `hermes config set …`, `hermes tools`, `hermes setup`) so you don't have to guess or invent workarounds.\nIf a skill has issues, fix it with skill_manage(action='patch').\nAfter difficult/iterative tasks, offer to save as a skill. If a skill you loaded was missing steps, had wrong commands, or needed pitfalls you discovered, update it before finishing.\n\n<available_skills>\n  autonomous-ai-agents: Skills for spawning and orchestrating autonomous AI coding agents and multi-agent workflows — running independent agent processes, delegating tasks, and coordinating parallel workstreams.\n    - claude-code: Delegate coding to Claude Code CLI (features, PRs).\n    - codex: Delegate coding to OpenAI Codex CLI (features, PRs).\n    - hermes-agent: Configure, extend, or contribute to Hermes Agent.\n    - opencode: Delegate coding to OpenCode CLI (features, PR review).\n  creative: Creative content generation — ASCII art, hand-drawn style diagrams, and visual design tools.\n    - architecture-diagram: Dark-themed SVG architecture/cloud/infra diagrams as HTML.\n    - ascii-art: ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.\n    - ascii-video: ASCII video: convert video/audio to colored ASCII MP4/GIF.\n    - baoyu-comic: Knowledge comics (知识漫画): educational, biography, tutorial.\n    - baoyu-infographic: Infographics: 21 layouts x 21 styles (信息图, 可视化).\n    - claude-design: Design one-off HTML artifacts (landing, deck, prototype).\n    - comfyui: Generate images, video, and audio with ComfyUI — install,...\n    - design-md: Author/validate/export Google's DESIGN.md token spec files.\n    - excalidraw: Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).\n    - humanizer: Humanize text: strip AI-isms and add real voice.\n    - ideation: Generate project ideas via creative constraints.\n    - manim-video: Manim CE animations: 3Blue1Brown math/algo videos.\n    - p5js: p5.js sketches: gen art, shaders, interactive, 3D.\n    - pixel-art: Pixel art w/ era palettes (NES, Game Boy, PICO-8).\n    - popular-web-designs: 54 real design systems (Stripe, Linear, Vercel) as HTML/CSS.\n    - pretext: Use when building creative browser demos with @chenglou/p...\n    - sketch: Throwaway HTML mockups: 2-3 design variants to compare.\n    - songwriting-and-ai-music: Songwriting craft and Suno AI music prompts.\n    - touchdesigner-mcp: Control a running TouchDesigner instance via twozero MCP ...\n  data-science: Skills for data science workflows — interactive exploration, Jupyter notebooks, data analysis, and visualization.\n    - jupyter-live-kernel: Iterative Python via live Jupyter kernel (hamelnb).\n  devops:\n    - cronjob-investigation: Investigate the execution path and actions of a scheduled...\n    - kanban-orchestrator: Decomposition playbook + anti-temptation rules for an orc...\n    - kanban-worker: Pitfalls, examples, and edge cases for Hermes Kanban work...\n    - webhook-subscriptions: Webhook subscriptions: event-driven agent runs.\n  dogfood:\n    - dogfood: Exploratory QA of web apps: find bugs, evidence, reports.\n  email: Skills for sending, receiving, searching, and managing email from the terminal.\n    - himalaya: Himalaya CLI: IMAP/SMTP email from terminal.\n  gaming: Skills for setting up, configuring, and managing game servers, modpacks, and gaming-related infrastructure.\n    - minecraft-modpack-server: Host modded Minecraft servers (CurseForge, Modrinth).\n    - pokemon-player: Play Pokemon via headless emulator + RAM reads.\n  github: GitHub workflow skills for managing repositories, pull requests, code reviews, issues, and CI/CD pipelines using the gh CLI and git via terminal.\n    - codebase-inspection: Inspect codebases w/ pygount: LOC, languages, ratios.\n    - github-auth: GitHub auth setup: HTTPS tokens, SSH keys, gh CLI login.\n    - github-code-review: Review PRs: diffs, inline comments via gh or REST.\n    - github-issues: Create, triage, label, assign GitHub issues via gh or REST.\n    - github-pr-workflow: GitHub PR lifecycle: branch, commit, open, CI, merge.\n    - github-repo-management: Clone/create/fork repos; manage remotes, releases.\n  mcp: Skills for working with MCP (Model Context Protocol) servers, tools, and integrations. Documents the built-in native MCP client — configure servers in config.yaml for automatic tool discovery.\n    - native-mcp: MCP client: connect servers, register tools (stdio/HTTP).\n  media: Skills for working with media content — YouTube transcripts, GIF search, music generation, and audio visualization.\n    - gif-search: Search/download GIFs from Tenor via curl + jq.\n    - heartmula: HeartMuLa: Suno-like song generation from lyrics + tags.\n    - songsee: Audio spectrograms/features (mel, chroma, MFCC) via CLI.\n    - spotify: Spotify: play, search, queue, manage playlists and devices.\n    - youtube-content: YouTube transcripts to summaries, threads, blogs.\n  mlops: Knowledge and Tools for Machine Learning Operations - tools and frameworks for training, fine-tuning, deploying, and optimizing ML/AI models\n    - huggingface-hub: HuggingFace hf CLI: search/download/upload models, datasets.\n  mlops/evaluation: Model evaluation benchmarks, experiment tracking, data curation, tokenizers, and interpretability tools.\n    - evaluating-llms-harness: lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).\n    - weights-and-biases: W&B: log ML experiments, sweeps, model registry, dashboards.\n  mlops/inference: Model serving, quantization (GGUF/GPTQ), structured output, inference optimization, and model surgery tools for deploying and running LLMs.\n    - llama-cpp: llama.cpp local GGUF inference + HF Hub model discovery.\n    - obliteratus: OBLITERATUS: abliterate LLM refusals (diff-in-means).\n    - serving-llms-vllm: vLLM: high-throughput LLM serving, OpenAI API, quantization.\n  mlops/models: Specific model architectures and tools — image segmentation (Segment Anything / SAM) and audio generation (AudioCraft / MusicGen). Additional model skills (CLIP, Stable Diffusion, Whisper, LLaVA) are available as optional skills.\n    - audiocraft-audio-generation: AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.\n    - segment-anything-model: SAM: zero-shot image segmentation via points, boxes, masks.\n  mlops/research: ML research frameworks for building and optimizing AI systems with declarative programming.\n    - dspy: DSPy: declarative LM programs, auto-optimize prompts, RAG.\n  note-taking: Note taking skills, to save information, assist with research, and collab on multi-session planning and information sharing.\n    - obsidian: Read, search, create, and edit notes in the Obsidian vault.\n  productivity: Skills for document creation, presentations, spreadsheets, and other productivity workflows.\n    - airtable: Airtable REST API via curl. Records CRUD, filters, upserts.\n    - google-workspace: Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\n    - linear: Linear: manage issues, projects, teams via GraphQL + curl.\n    - nano-pdf: Edit PDF text/typos/titles via nano-pdf CLI (NL prompts).\n    - notion: Notion API via curl: pages, databases, blocks, search.\n    - ocr-and-documents: Extract text from PDFs/scans (pymupdf, marker-pdf).\n    - powerpoint: Create, read, edit .pptx decks, slides, notes, templates.\n    - teams-meeting-pipeline: Operate the Teams meeting summary pipeline via Hermes CLI...\n  red-teaming:\n    - godmode: Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.\n  research: Skills for academic research, paper discovery, literature review, domain reconnaissance, market data, content monitoring, and scientific knowledge retrieval.\n    - arxiv: Search arXiv papers by keyword, author, category, or ID.\n    - blogwatcher: Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.\n    - llm-wiki: Karpathy's LLM Wiki: build/query interlinked markdown KB.\n    - polymarket: Query Polymarket: markets, prices, orderbooks, history.\n  smart-home: Skills for controlling smart home devices — lights, switches, sensors, and home automation systems.\n    - openhue: Control Philips Hue lights, scenes, rooms via OpenHue CLI.\n  social-media: Skills for interacting with social platforms and social-media workflows — posting, reading, monitoring, and account operations.\n    - xurl: X/Twitter via xurl CLI: post, search, DM, media, v2 API.\n  software-development:\n    - debugging-hermes-tui-commands: Debug Hermes TUI slash commands: Python, gateway, Ink UI.\n    - hermes-agent-skill-authoring: Author in-repo SKILL.md: frontmatter, validator, structure.\n    - node-inspect-debugger: Debug Node.js via --inspect + Chrome DevTools Protocol CLI.\n    - plan: Plan mode: write markdown plan to .hermes/plans/, no exec.\n    - python-debugpy: Debug Python: pdb REPL + debugpy remote (DAP).\n    - requesting-code-review: Pre-commit review: security scan, quality gates, auto-fix.\n    - spike: Throwaway experiments to validate an idea before build.\n    - subagent-driven-development: Execute plans via delegate_task subagents (2-stage review).\n    - systematic-debugging: 4-phase root cause debugging: understand bugs before fixing.\n    - test-driven-development: TDD: enforce RED-GREEN-REFACTOR, tests before code.\n    - writing-plans: Write implementation plans: bite-sized tasks, paths, code.\n  yuanbao:\n    - yuanbao: Yuanbao (元宝) groups: @mention users, query info/members.\n</available_skills>\n\nOnly proceed without loading a skill if genuinely none are relevant to the task.\n\nHost: Linux (6.8.0-111-generic)\nUser home directory: /opt/data\nCurrent working directory: /opt/hermes\n\nYou are on a text messaging communication platform, Telegram. Standard markdown is automatically converted to Telegram format. Supported: **bold**, *italic*, ~~strikethrough~~, ||spoiler||, `inline code`, ```code blocks```, [links](url), and ## headers. Telegram has NO table syntax — prefer bullet lists or labeled key: value pairs over pipe tables (any tables you do emit are auto-rewritten into row-group bullets, which you can produce directly for cleaner output). You can send media files natively: to deliver a file to the user, include MEDIA:/absolute/path/to/file in your response. Images (.png, .jpg, .webp) appear as photos, audio (.ogg) sends as voice bubbles, and videos (.mp4) play inline. You can also include image URLs in markdown format ![alt](url) and they will be sent as native photos.\n\n══════════════════════════════════════════════\nMEMORY (your personal notes) [67% — 1,493/2,200 chars]\n══════════════════════════════════════════════\nThis Hermes environment runs inside Docker, and `hermes gateway install` reports that service installation is not needed inside a Docker container.\n§\nHermes config at /opt/data/config.yaml is set to use browser.cloud_provider: browser-use.\n§\nBu ortamda `hermes` CLI PATH'te değil; doğrudan `hermes` komutu çalışmıyor. `python3` mevcut (/usr/bin/python3, sürüm 3.13.5).\n§\nUser's GitHub backup repository is github.com/dekanweb/hermesbackup, used for Hermes backups.\n§\nUser backs up Hermes to the GitHub repo dekanweb/hermesbackup and prefers nightly automated backups via SSH deploy key.\n§\nIn this Hermes environment, the Python `mcp` package is not installed, and `/opt/data/config.yaml` currently has no `mcp_servers` configured.\n§\nHermes GitHub backup repo dekanweb/hermesbackup mirrors durable state under repo-local state/ (/.hermes, skills, cron, sessions, memories + config.yaml/channel_directory.json/SOUL.md/.skills_prompt_snapshot.json); excludes secrets (.env/auth.json/.ssh) and caches; includes backup.sh + restore.sh. Deployment is Hostinger/Hostingetr Ubuntu VPS running Hermes in Docker (image ghcr.io/hostinger/hvps-hermes-agent:latest); container may lack nano/vi so /opt/data/.env edits may require non-editor methods (e.g., python3).\n§\nIn this Hermes environment, HERMES_HOME and HOME are /opt/data, so cron script paths resolve under /opt/data/scripts; backup wrapper scripts must be real files there because cron blocks symlinks that resolve outside the scripts directory.\n\n══════════════════════════════════════════════\nUSER PROFILE (who the user is) [97% — 1,336/1,375 chars]\n══════════════════════════════════════════════\nUser prefers replies in Turkish.\n§\nUser prefers one-time GitHub backup setup and does not want repeated requests for email or similar credential details.\n§\nUser prefers Belgium/Europe-Brussels time for schedules and timestamps.\n§\nUser wants the phrase “şimdi yedek al” to mean triggering a manual Hermes GitHub backup on request.\n§\nUser wants to organize business documents in Google Drive and may keep the structure lightweight for now, with details remembered in the assistant rather than a separate complex system.\n§\nUser prefers Telegram conversations in Hermes Agent to use Gemini models by default.\n§\nUser wants to use Hermes through conversation for note-taking and future planning, with Obsidian-style filesystem notes managed by the assistant.\n§\nUser wants the note system to support mixed use cases through conversation: competitor Instagram accounts, brand-specific price lists, multiple brands, and personal life notes.\n§\nUser wants Obsidian and Notion to coexist as separate destinations, and may explicitly specify per item whether it should be added to Obsidian or Notion.\n§\nUser does not want to use Notion for now and prefers to cancel that setup.\n§\nKullanıcı, çözüm üretirken kod çıktısı/vermesi yerine doğrudan aksiyon alınmasını (yedeklemeyi düzenleyip yeniden başlatmak gibi) tercih ediyor; kod paylaşımı istemiyor.\n\nConversation started: Monday, May 25, 2026 10:32 PM\nModel: gpt-5.4-mini\nProvider: openai-codex",
   "tools": [
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_back",
-        "description": "Navigate back to the previous page in browser history. Requires browser_navigate to be called first.",
-        "parameters": {
-          "type": "object",
-          "properties": {}
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_click",
-        "description": "Click on an element identified by its ref ID from the snapshot (e.g., '@e5'). The ref IDs are shown in square brackets in the snapshot output. Requires browser_navigate and browser_snapshot to be called first.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "ref": {
-              "type": "string",
-              "description": "The element reference from the snapshot (e.g., '@e5', '@e12')"
-            }
-          },
-          "required": [
-            "ref"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_console",
-        "description": "Get browser console output and JavaScript errors from the current page. Returns console.log/warn/error/info messages and uncaught JS exceptions. Use this to detect silent JavaScript errors, failed API calls, and application warnings. Requires browser_navigate to be called first. When 'expression' is provided, evaluates JavaScript in the page context and returns the result — use this for DOM inspection, reading page state, or extracting data programmatically.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "clear": {
-              "type": "boolean",
-              "default": false,
-              "description": "If true, clear the message buffers after reading"
-            },
-            "expression": {
-              "type": "string",
-              "description": "JavaScript expression to evaluate in the page context. Runs in the browser like DevTools console — full access to DOM, window, document. Return values are serialized to JSON. Example: 'document.title' or 'document.querySelectorAll(\"a\").length'"
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_get_images",
-        "description": "Get a list of all images on the current page with their URLs and alt text. Useful for finding images to analyze with the vision tool. Requires browser_navigate to be called first.",
-        "parameters": {
-          "type": "object",
-          "properties": {}
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_navigate",
-        "description": "Navigate to a URL in the browser. Initializes the session and loads the page. Must be called before other browser tools. For plain-text endpoints — URLs ending in .md, .txt, .json, .yaml, .yml, .csv, .xml, raw.githubusercontent.com, or any documented API endpoint — prefer curl via the terminal tool or web_extract; the browser stack is overkill and much slower for these. Use browser tools when you need to interact with a page (click, fill forms, dynamic content). Returns a compact page snapshot with interactive elements and ref IDs — no need to call browser_snapshot separately after navigating.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "url": {
-              "type": "string",
-              "description": "The URL to navigate to (e.g., 'https://example.com')"
-            }
-          },
-          "required": [
-            "url"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_press",
-        "description": "Press a keyboard key. Useful for submitting forms (Enter), navigating (Tab), or keyboard shortcuts. Requires browser_navigate to be called first.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "key": {
-              "type": "string",
-              "description": "Key to press (e.g., 'Enter', 'Tab', 'Escape', 'ArrowDown')"
-            }
-          },
-          "required": [
-            "key"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_scroll",
-        "description": "Scroll the page in a direction. Use this to reveal more content that may be below or above the current viewport. Requires browser_navigate to be called first.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "direction": {
-              "type": "string",
-              "enum": [
-                "up",
-                "down"
-              ],
-              "description": "Direction to scroll"
-            }
-          },
-          "required": [
-            "direction"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_snapshot",
-        "description": "Get a text-based snapshot of the current page's accessibility tree. Returns interactive elements with ref IDs (like @e1, @e2) for browser_click and browser_type. full=false (default): compact view with interactive elements. full=true: complete page content. Snapshots over 8000 chars are truncated or LLM-summarized. Requires browser_navigate first. Note: browser_navigate already returns a compact snapshot — use this to refresh after interactions that change the page, or with full=true for complete content.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "full": {
-              "type": "boolean",
-              "description": "If true, returns complete page content. If false (default), returns compact view with interactive elements only.",
-              "default": false
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_type",
-        "description": "Type text into an input field identified by its ref ID. Clears the field first, then types the new text. Requires browser_navigate and browser_snapshot to be called first.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "ref": {
-              "type": "string",
-              "description": "The element reference from the snapshot (e.g., '@e3')"
-            },
-            "text": {
-              "type": "string",
-              "description": "The text to type into the field"
-            }
-          },
-          "required": [
-            "ref",
-            "text"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "browser_vision",
-        "description": "Take a screenshot of the current page and analyze it with vision AI. Use this when you need to visually understand what's on the page - especially useful for CAPTCHAs, visual verification challenges, complex layouts, or when the text snapshot doesn't capture important visual information. Returns both the AI analysis and a screenshot_path that you can share with the user by including MEDIA:<screenshot_path> in your response. Requires browser_navigate to be called first.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "question": {
-              "type": "string",
-              "description": "What you want to know about the page visually. Be specific about what you're looking for."
-            },
-            "annotate": {
-              "type": "boolean",
-              "default": false,
-              "description": "If true, overlay numbered [N] labels on interactive elements. Each [N] maps to ref @eN for subsequent browser commands. Useful for QA and spatial reasoning about page layout."
-            }
-          },
-          "required": [
-            "question"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "clarify",
-        "description": "Ask the user a question when you need clarification, feedback, or a decision before proceeding. Supports two modes:\n\n1. **Multiple choice** — provide up to 4 choices. The user picks one or types their own answer via a 5th 'Other' option.\n2. **Open-ended** — omit choices entirely. The user types a free-form response.\n\nUse this tool when:\n- The task is ambiguous and you need the user to choose an approach\n- You want post-task feedback ('How did that work out?')\n- You want to offer to save a skill or update memory\n- A decision has meaningful trade-offs the user should weigh in on\n\nDo NOT use this tool for simple yes/no confirmation of dangerous commands (the terminal tool handles that). Prefer making a reasonable default choice yourself when the decision is low-stakes.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "question": {
-              "type": "string",
-              "description": "The question to present to the user."
-            },
-            "choices": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "maxItems": 4,
-              "description": "Up to 4 answer choices. Omit this parameter entirely to ask an open-ended question. When provided, the UI automatically appends an 'Other (type your answer)' option."
-            }
-          },
-          "required": [
-            "question"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "cronjob",
-        "description": "Manage scheduled cron jobs with a single compressed tool.\n\nUse action='create' to schedule a new job from a prompt or one or more skills.\nUse action='list' to inspect jobs.\nUse action='update', 'pause', 'resume', 'remove', or 'run' to manage an existing job.\n\nTo stop a job the user no longer wants: first action='list' to find the job_id, then action='remove' with that job_id. Never guess job IDs — always list first.\n\nJobs run in a fresh session with no current-chat context, so prompts must be self-contained.\nIf skills are provided on create, the future cron run loads those skills in order, then follows the prompt as the task instruction.\nOn update, passing skills=[] clears attached skills.\n\nNOTE: The agent's final response is auto-delivered to the target. Put the primary\nuser-facing content in the final response. Cron jobs run autonomously with no user\npresent — they cannot ask questions or request clarification.\n\nImportant safety rule: cron-run sessions should not recursively schedule more cron jobs.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "action": {
-              "type": "string",
-              "description": "One of: create, list, update, pause, resume, remove, run"
-            },
-            "job_id": {
-              "type": "string",
-              "description": "Required for update/pause/resume/remove/run"
-            },
-            "prompt": {
-              "type": "string",
-              "description": "For create: the full self-contained prompt. If skills are also provided, this becomes the task instruction paired with those skills."
-            },
-            "schedule": {
-              "type": "string",
-              "description": "For create/update: '30m', 'every 2h', '0 9 * * *', or ISO timestamp"
-            },
-            "name": {
-              "type": "string",
-              "description": "Optional human-friendly name"
-            },
-            "repeat": {
-              "type": "integer",
-              "description": "Optional repeat count. Omit for defaults (once for one-shot, forever for recurring)."
-            },
-            "deliver": {
-              "type": "string",
-              "description": "Omit this parameter to auto-deliver back to the current chat and topic (recommended). Auto-detection preserves thread/topic context. Only set explicitly when the user asks to deliver somewhere OTHER than the current conversation. Values: 'origin' (same as omitting), 'local' (no delivery, save only), 'all' (fan out to every connected home channel), or platform:chat_id:thread_id for a specific destination. Combine with comma: 'origin,all' delivers to the origin plus every other connected channel. Examples: 'telegram:-1001234567890:17585', 'discord:#engineering', 'sms:+15551234567', 'all'. WARNING: 'platform:chat_id' without :thread_id loses topic targeting. 'all' resolves at fire time, so a job created before a channel was wired up will pick it up automatically once connected."
-            },
-            "skills": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Optional ordered list of skill names to load before executing the cron prompt. On update, pass an empty array to clear attached skills."
-            },
-            "model": {
-              "type": "object",
-              "description": "Optional per-job model override. If provider is omitted, the current main provider is pinned at creation time so the job stays stable.",
-              "properties": {
-                "provider": {
-                  "type": "string",
-                  "description": "Provider name (e.g. 'openrouter', 'anthropic', or 'custom:<name>' for a provider defined in custom_providers config — always include the ':<name>' suffix, never pass the bare 'custom'). Omit to use and pin the current provider."
-                },
-                "model": {
-                  "type": "string",
-                  "description": "Model name (e.g. 'anthropic/claude-sonnet-4', 'claude-sonnet-4')"
-                }
-              },
-              "required": [
-                "model"
-              ]
-            },
-            "script": {
-              "type": "string",
-              "description": "Optional path to a script that runs each tick. In the default mode its stdout is injected into the agent's prompt as context (data-collection / change-detection pattern). With no_agent=True, the script IS the job and its stdout is delivered verbatim (classic watchdog pattern). Relative paths resolve under ~/./scripts/. ``.sh``/``.bash`` extensions run via bash, everything else via Python. On update, pass empty string to clear."
-            },
-            "no_agent": {
-              "type": "boolean",
-              "default": false,
-              "description": "Default: False (LLM-driven job — the agent runs the prompt each tick). Set True to skip the LLM entirely: the scheduler just runs ``script`` on schedule and delivers its stdout verbatim. No tokens, no agent loop, no model override honoured. \n\nREQUIREMENTS when True: ``script`` MUST be set (``prompt`` and ``skills`` are ignored). \n\nDELIVERY SEMANTICS when True: (a) non-empty stdout is sent verbatim as the message; (b) EMPTY stdout means SILENT — nothing is sent to the user and they won't see anything happened, so design your script to stay quiet when there's nothing to report (the watchdog pattern); (c) non-zero exit / timeout sends an error alert so a broken watchdog can't fail silently. \n\nWHEN TO USE True: recurring script-only pings where the script itself produces the exact message text (memory/disk/GPU watchdogs, threshold alerts, heartbeats, CI notifications, API pollers with a fixed output shape). WHEN TO USE False (default): anything that needs reasoning — summarize a feed, draft a daily briefing, pick interesting items, rephrase data for a human, follow conditional logic based on content."
-            },
-            "context_from": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Optional job ID or list of job IDs whose most recent completed output is injected into the prompt as context before each run. Use this to chain cron jobs: job A collects data, job B processes it. Each entry must be a valid job ID (from cronjob action='list'). Note: injects the most recent completed output — does not wait for upstream jobs running in the same tick. On update, pass an empty array to clear."
-            },
-            "enabled_toolsets": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Optional list of toolset names to restrict the job's agent to (e.g. [\"web\", \"terminal\", \"file\", \"delegation\"]). When set, only tools from these toolsets are loaded, significantly reducing input token overhead. When omitted, all default tools are loaded. Infer from the job's prompt — e.g. use \"web\" if it calls web_search, \"terminal\" if it runs scripts, \"file\" if it reads files, \"delegation\" if it calls delegate_task. On update, pass an empty array to clear."
-            },
-            "workdir": {
-              "type": "string",
-              "description": "Optional absolute path to run the job from. When set, AGENTS.md / CLAUDE.md / .cursorrules from that directory are injected into the system prompt, and the terminal/file/code_exec tools use it as their working directory — useful for running a job inside a specific project repo. Must be an absolute path that exists. When unset (default), preserves the original behaviour: no project context files, tools use the scheduler's cwd. On update, pass an empty string to clear. Jobs with workdir run sequentially (not parallel) to keep per-job directories isolated."
-            }
-          },
-          "required": [
-            "action"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "delegate_task",
-        "description": "Spawn one or more subagents to work on tasks in isolated contexts. Each subagent gets its own conversation, terminal session, and toolset. Only the final summary is returned -- intermediate tool results never enter your context window.\n\nTWO MODES (one of 'goal' or 'tasks' is required):\n1. Single task: provide 'goal' (+ optional context, toolsets)\n2. Batch (parallel): provide 'tasks' array with up to 3 items concurrently for this user (configured via delegation.max_concurrent_children in config.yaml). All run in parallel and results are returned together. Nested delegation is OFF for this user (max_spawn_depth=1): every child is a leaf and cannot delegate further. Raise delegation.max_spawn_depth in config.yaml to enable nesting.\n\nWHEN TO USE delegate_task:\n- Reasoning-heavy subtasks (debugging, code review, research synthesis)\n- Tasks that would flood your context with intermediate data\n- Parallel independent workstreams (research A and B simultaneously)\n\nWHEN NOT TO USE (use these instead):\n- Mechanical multi-step work with no reasoning needed -> use execute_code\n- Single tool call -> just call the tool directly\n- Tasks needing user interaction -> subagents cannot use clarify\n- Durable long-running work that must outlive the current turn -> use cronjob (action='create') or terminal(background=True, notify_on_complete=True) instead. delegate_task runs SYNCHRONOUSLY inside the parent turn: if the parent is interrupted (user sends a new message, /stop, /new) the child is cancelled with status='interrupted' and its work is discarded. Children cannot continue in the background.\n\nIMPORTANT:\n- Subagents have NO memory of your conversation. Pass all relevant info (file paths, error messages, constraints) via the 'context' field.\n- If the user is writing in a non-English language, or asked for output in a specific language / tone / style, say so in 'context' (e.g. \"respond in Chinese\", \"return output in Japanese\"). Otherwise subagents default to English and their summaries will contaminate your final reply with the wrong language.\n- Subagent summaries are SELF-REPORTS, not verified facts. A subagent that claims \"uploaded successfully\" or \"file written\" may be wrong. For operations with external side-effects (HTTP POST/PUT, remote writes, file creation at shared paths, publishing), require the subagent to return a verifiable handle (URL, ID, absolute path, HTTP status) and verify it yourself — fetch the URL, stat the file, read back the content — before telling the user the operation succeeded.\n- Leaf subagents (role='leaf', the default) CANNOT call: delegate_task, clarify, memory, send_message, execute_code.\n- Orchestrator subagents (role='orchestrator') retain delegate_task so they can spawn their own workers, but still cannot use clarify, memory, send_message, or execute_code. Orchestrators are bounded by max_spawn_depth=1 for this user and can be disabled globally via delegation.orchestrator_enabled=false.\n- Each subagent gets its own terminal session (separate working directory and state).\n- Results are always returned as an array, one entry per task.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "goal": {
-              "type": "string",
-              "description": "What the subagent should accomplish. Be specific and self-contained -- the subagent knows nothing about your conversation history."
-            },
-            "context": {
-              "type": "string",
-              "description": "Background information the subagent needs: file paths, error messages, project structure, constraints. The more specific you are, the better the subagent performs."
-            },
-            "toolsets": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Toolsets to enable for this subagent. Default: inherits your enabled toolsets. Available toolsets: 'browser', 'computer_use', 'cronjob', 'discord', 'discord_admin', 'feishu_doc', 'feishu_drive', 'file', 'homeassistant', 'image_gen', 'kanban', 'search', 'session_search', 'skills', 'spotify', 'terminal', 'todo', 'tts', 'video', 'vision', 'web', 'yuanbao'. Common patterns: ['terminal', 'file'] for code work, ['web'] for research, ['browser'] for web interaction, ['terminal', 'file', 'web'] for full-stack tasks."
-            },
-            "tasks": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "goal": {
-                    "type": "string",
-                    "description": "Task goal"
-                  },
-                  "context": {
-                    "type": "string",
-                    "description": "Task-specific context"
-                  },
-                  "toolsets": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Toolsets for this specific task. Available: 'browser', 'computer_use', 'cronjob', 'discord', 'discord_admin', 'feishu_doc', 'feishu_drive', 'file', 'homeassistant', 'image_gen', 'kanban', 'search', 'session_search', 'skills', 'spotify', 'terminal', 'todo', 'tts', 'video', 'vision', 'web', 'yuanbao'. Use 'web' for network access, 'terminal' for shell, 'browser' for web interaction."
-                  },
-                  "acp_command": {
-                    "type": "string",
-                    "description": "Per-task ACP command override (e.g. 'copilot'). Overrides the top-level acp_command for this task only. Do NOT set unless the user explicitly told you an ACP CLI is installed."
-                  },
-                  "acp_args": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Per-task ACP args override. Leave empty unless acp_command is set."
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "leaf",
-                      "orchestrator"
-                    ],
-                    "description": "Per-task role override. See top-level 'role' for semantics."
-                  }
-                },
-                "required": [
-                  "goal"
-                ]
-              },
-              "description": "Batch mode: tasks to run in parallel (up to 3 for this user, set via delegation.max_concurrent_children). Each gets its own subagent with isolated context and terminal session. When provided, top-level goal/context/toolsets are ignored."
-            },
-            "role": {
-              "type": "string",
-              "enum": [
-                "leaf",
-                "orchestrator"
-              ],
-              "description": "Role of the child agent. 'leaf' (default) = focused worker, cannot delegate further. 'orchestrator' = can use delegate_task to spawn its own workers. Nesting is OFF for this user (max_spawn_depth=1); 'orchestrator' is silently forced to 'leaf'. Raise delegation.max_spawn_depth in config.yaml to enable."
-            },
-            "acp_command": {
-              "type": "string",
-              "description": "Override ACP command for child agents (e.g. 'copilot'). When set, children use ACP subprocess transport instead of inheriting the parent's transport. Requires an ACP-compatible CLI (currently GitHub Copilot CLI via 'copilot --acp --stdio'). See agent/copilot_acp_client.py for the implementation. IMPORTANT: Do NOT set this unless the user has explicitly told you a specific ACP-compatible CLI is installed and configured. Leave empty to use the parent's default transport (Hermes subagents)."
-            },
-            "acp_args": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Arguments for the ACP command (default: ['--acp', '--stdio']). Only used when acp_command is set. Leave empty unless acp_command is explicitly provided."
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "execute_code",
-        "description": "Run a Python script that can call Hermes tools programmatically. Use this when you need 3+ tool calls with processing logic between them, need to filter/reduce large tool outputs before they enter your context, need conditional branching (if X then Y else Z), or need to loop (fetch N pages, process N files, retry on failure).\n\nUse normal tool calls instead when: single tool call with no processing, you need to see the full result and apply complex reasoning, or the task requires interactive user input.\n\nAvailable via `from hermes_tools import ...`:\n\n  read_file(path: str, offset: int = 1, limit: int = 500) -> dict\n    Lines are 1-indexed. Returns {\"content\": \"...\", \"total_lines\": N}\n  write_file(path: str, content: str) -> dict\n    Always overwrites the entire file.\n  search_files(pattern: str, target=\"content\", path=\".\", file_glob=None, limit=50) -> dict\n    target: \"content\" (search inside files) or \"files\" (find files by name). Returns {\"matches\": [...]}\n  patch(path: str, old_string: str, new_string: str, replace_all: bool = False) -> dict\n    Replaces old_string with new_string in the file.\n  terminal(command: str, timeout=None, workdir=None) -> dict\n    Foreground only (no background/pty). Returns {\"output\": \"...\", \"exit_code\": N}\n\nLimits: 5-minute timeout, 50KB stdout cap, max 50 tool calls per script. terminal() is foreground-only (no background or pty).\n\nScripts run in the session's working directory with the active venv's python, so project deps (pandas, etc.) and relative paths work like in terminal().\n\nPrint your final result to stdout. Use Python stdlib (json, re, math, csv, datetime, collections, etc.) for processing between tool calls.\n\nAlso available (no import needed — built into hermes_tools):\n  json_parse(text: str) — json.loads with strict=False; use for terminal() output with control chars\n  shell_quote(s: str) — shlex.quote(); use when interpolating dynamic strings into shell commands\n  retry(fn, max_attempts=3, delay=2) — retry with exponential backoff for transient failures",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "code": {
-              "type": "string",
-              "description": "Python code to execute. Import tools with `from hermes_tools import terminal, ...` and print your final result to stdout."
-            }
-          },
-          "required": [
-            "code"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "image_generate",
-        "description": "Generate high-quality images from text prompts. The underlying backend (FAL, OpenAI, etc.) and model are user-configured and not selectable by the agent. Returns either a URL or an absolute file path in the `image` field; display it with markdown ![description](url-or-path) and the gateway will deliver it.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "prompt": {
-              "type": "string",
-              "description": "The text prompt describing the desired image. Be detailed and descriptive."
-            },
-            "aspect_ratio": {
-              "type": "string",
-              "enum": [
-                "landscape",
-                "square",
-                "portrait"
-              ],
-              "description": "The aspect ratio of the generated image. 'landscape' is 16:9 wide, 'portrait' is 16:9 tall, 'square' is 1:1.",
-              "default": "landscape"
-            }
-          },
-          "required": [
-            "prompt"
-          ]
-        }
-      }
-    },
     {
       "type": "function",
       "function": {
@@ -494,248 +45,6 @@
             "action",
             "target"
           ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "patch",
-        "description": "Targeted find-and-replace edits in files. Use this instead of sed/awk in terminal. Uses fuzzy matching (9 strategies) so minor whitespace/indentation differences won't break it. Returns a unified diff. Auto-runs syntax checks after editing.\n\nREPLACE MODE (mode='replace', default): find a unique string and replace it. REQUIRED PARAMETERS: mode, path, old_string, new_string.\nPATCH MODE (mode='patch'): apply V4A multi-file patches for bulk changes. REQUIRED PARAMETERS: mode, patch.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "mode": {
-              "type": "string",
-              "enum": [
-                "replace",
-                "patch"
-              ],
-              "description": "Edit mode. 'replace' (default): requires path + old_string + new_string. 'patch': requires patch content only.",
-              "default": "replace"
-            },
-            "path": {
-              "type": "string",
-              "description": "REQUIRED when mode='replace'. File path to edit."
-            },
-            "old_string": {
-              "type": "string",
-              "description": "REQUIRED when mode='replace'. Exact text to find and replace. Must be unique in the file unless replace_all=true. Include surrounding context lines to ensure uniqueness."
-            },
-            "new_string": {
-              "type": "string",
-              "description": "REQUIRED when mode='replace'. Replacement text. Pass empty string '' to delete the matched text."
-            },
-            "replace_all": {
-              "type": "boolean",
-              "description": "Replace all occurrences instead of requiring a unique match (default: false)",
-              "default": false
-            },
-            "patch": {
-              "type": "string",
-              "description": "REQUIRED when mode='patch'. V4A format patch content. Format:\n*** Begin Patch\n*** Update File: path/to/file\n@@ context hint @@\n context line\n-removed line\n+added line\n*** End Patch"
-            }
-          },
-          "required": [
-            "mode"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "process",
-        "description": "Manage background processes started with terminal(background=true). Actions: 'list' (show all), 'poll' (check status + new output), 'log' (full output with pagination), 'wait' (block until done or timeout), 'kill' (terminate), 'write' (send raw stdin data without newline), 'submit' (send data + Enter, for answering prompts), 'close' (close stdin/send EOF).",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "action": {
-              "type": "string",
-              "enum": [
-                "list",
-                "poll",
-                "log",
-                "wait",
-                "kill",
-                "write",
-                "submit",
-                "close"
-              ],
-              "description": "Action to perform on background processes"
-            },
-            "session_id": {
-              "type": "string",
-              "description": "Process session ID (from terminal background output). Required for all actions except 'list'."
-            },
-            "data": {
-              "type": "string",
-              "description": "Text to send to process stdin (for 'write' and 'submit' actions)"
-            },
-            "timeout": {
-              "type": "integer",
-              "description": "Max seconds to block for 'wait' action. Returns partial output on timeout.",
-              "minimum": 1
-            },
-            "offset": {
-              "type": "integer",
-              "description": "Line offset for 'log' action (default: last 200 lines)"
-            },
-            "limit": {
-              "type": "integer",
-              "description": "Max lines to return for 'log' action",
-              "minimum": 1
-            }
-          },
-          "required": [
-            "action"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "read_file",
-        "description": "Read a text file with line numbers and pagination. Use this instead of cat/head/tail in terminal. Output format: 'LINE_NUM|CONTENT'. Suggests similar filenames if not found. Use offset and limit for large files. Reads exceeding ~100K characters are rejected; use offset and limit to read specific sections of large files. NOTE: Cannot read images or binary files — use vision_analyze for images.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string",
-              "description": "Path to the file to read (absolute, relative, or ~/path)"
-            },
-            "offset": {
-              "type": "integer",
-              "description": "Line number to start reading from (1-indexed, default: 1)",
-              "default": 1,
-              "minimum": 1
-            },
-            "limit": {
-              "type": "integer",
-              "description": "Maximum number of lines to read (default: 500, max: 2000)",
-              "default": 500,
-              "maximum": 2000
-            }
-          },
-          "required": [
-            "path"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "search_files",
-        "description": "Search file contents or find files by name. Use this instead of grep/rg/find/ls in terminal. Ripgrep-backed, faster than shell equivalents.\n\nContent search (target='content'): Regex search inside files. Output modes: full matches with line numbers, file paths only, or match counts.\n\nFile search (target='files'): Find files by glob pattern (e.g., '*.py', '*config*'). Also use this instead of ls — results sorted by modification time.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "pattern": {
-              "type": "string",
-              "description": "Regex pattern for content search, or glob pattern (e.g., '*.py') for file search"
-            },
-            "target": {
-              "type": "string",
-              "enum": [
-                "content",
-                "files"
-              ],
-              "description": "'content' searches inside file contents, 'files' searches for files by name",
-              "default": "content"
-            },
-            "path": {
-              "type": "string",
-              "description": "Directory or file to search in (default: current working directory)",
-              "default": "."
-            },
-            "file_glob": {
-              "type": "string",
-              "description": "Filter files by pattern in grep mode (e.g., '*.py' to only search Python files)"
-            },
-            "limit": {
-              "type": "integer",
-              "description": "Maximum number of results to return (default: 50)",
-              "default": 50
-            },
-            "offset": {
-              "type": "integer",
-              "description": "Skip first N results for pagination (default: 0)",
-              "default": 0
-            },
-            "output_mode": {
-              "type": "string",
-              "enum": [
-                "content",
-                "files_only",
-                "count"
-              ],
-              "description": "Output format for grep mode: 'content' shows matching lines with line numbers, 'files_only' lists file paths, 'count' shows match counts per file",
-              "default": "content"
-            },
-            "context": {
-              "type": "integer",
-              "description": "Number of context lines before and after each match (grep mode only)",
-              "default": 0
-            }
-          },
-          "required": [
-            "pattern"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "send_message",
-        "description": "Send a message to a connected messaging platform, or list available targets.\n\nIMPORTANT: When the user asks to send to a specific channel or person (not just a bare platform name), call send_message(action='list') FIRST to see available targets, then send to the correct one.\nIf the user just says a platform name like 'send to telegram', send directly to the home channel without listing first.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "action": {
-              "type": "string",
-              "enum": [
-                "send",
-                "list"
-              ],
-              "description": "Action to perform. 'send' (default) sends a message. 'list' returns all available channels/contacts across connected platforms."
-            },
-            "target": {
-              "type": "string",
-              "description": "Delivery target. Format: 'platform' (uses home channel), 'platform:#channel-name', 'platform:chat_id', or 'platform:chat_id:thread_id' for Telegram topics and Discord threads. Examples: 'telegram', 'telegram:-1001234567890:17585', 'discord:999888777:555444333', 'discord:#bot-home', 'slack:#engineering', 'signal:+155****4567', 'matrix:!roomid:server.org', 'matrix:@user:server.org', 'yuanbao:direct:<account_id>' (DM), 'yuanbao:group:<group_code>' (group chat)"
-            },
-            "message": {
-              "type": "string",
-              "description": "The message text to send. To send an image or file, include MEDIA:<local_path> (e.g. 'MEDIA:/tmp/hermes/cache/img_xxx.jpg') in the message — the platform will deliver it as a native media attachment."
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "session_search",
-        "description": "Search your long-term memory of past conversations, or browse recent sessions. This is your recall -- every past session is searchable, and this tool summarizes what happened.\n\nTWO MODES:\n1. Recent sessions (no query): Call with no arguments to see what was worked on recently. Returns titles, previews, and timestamps. Zero LLM cost, instant. Start here when the user asks what were we working on or what did we do recently.\n2. Keyword search (with query): Search for specific topics across all past sessions. Returns LLM-generated summaries of matching sessions.\n\nUSE THIS PROACTIVELY when:\n- The user says 'we did this before', 'remember when', 'last time', 'as I mentioned'\n- The user asks about a topic you worked on before but don't have in current context\n- The user references a project, person, or concept that seems familiar but isn't in memory\n- You want to check if you've solved a similar problem before\n- The user asks 'what did we do about X?' or 'how did we fix Y?'\n\nDon't hesitate to search when it is actually cross-session -- it's fast and cheap. Better to search and confirm than to guess or ask the user to repeat themselves.\n\nSearch syntax: keywords joined with OR for broad recall (elevenlabs OR baseten OR funding), phrases for exact match (\"docker networking\"), boolean (python NOT java), prefix (deploy*). IMPORTANT: Use OR between keywords for best results — FTS5 defaults to AND which misses sessions that only mention some terms. If a broad OR query returns nothing, try individual keyword searches in parallel. Returns summaries of the top matching sessions.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "query": {
-              "type": "string",
-              "description": "Search query — keywords, phrases, or boolean expressions to find in past sessions. Omit this parameter entirely to browse recent sessions instead (returns titles, previews, timestamps with no LLM cost)."
-            },
-            "role_filter": {
-              "type": "string",
-              "description": "Optional: only search messages from specific roles (comma-separated). E.g. 'user,assistant' to skip tool outputs."
-            },
-            "limit": {
-              "type": "integer",
-              "description": "Max sessions to summarize (default: 3, max: 5).",
-              "default": 3
-            }
-          }
         }
       }
     },
@@ -841,179 +150,9 @@
           }
         }
       }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "terminal",
-        "description": "Execute shell commands on a Linux environment. Filesystem usually persists between calls.\n\nDo NOT use cat/head/tail to read files — use read_file instead.\nDo NOT use grep/rg/find to search — use search_files instead.\nDo NOT use ls to list directories — use search_files(target='files') instead.\nDo NOT use sed/awk to edit files — use patch instead.\nDo NOT use echo/cat heredoc to create files — use write_file instead.\nReserve terminal for: builds, installs, git, processes, scripts, network, package managers, and anything that needs a shell.\n\nForeground (default): Commands return INSTANTLY when done, even if the timeout is high. Set timeout=300 for long builds/scripts — you'll still get the result in seconds if it's fast. Prefer foreground for short commands.\nBackground: Set background=true to get a session_id. Two patterns:\n  (1) Long-lived processes that never exit (servers, watchers).\n  (2) Long-running tasks with notify_on_complete=true — you can keep working on other things and the system auto-notifies you when the task finishes. Great for test suites, builds, deployments, or anything that takes more than a minute.\nFor servers/watchers, do NOT use shell-level background wrappers (nohup/disown/setsid/trailing '&') in foreground mode. Use background=true so Hermes can track lifecycle and output.\nAfter starting a server, verify readiness with a health check or log signal, then run tests in a separate terminal() call. Avoid blind sleep loops.\nUse process(action=\"poll\") for progress checks, process(action=\"wait\") to block until done.\nWorking directory: Use 'workdir' for per-command cwd.\nPTY mode: Set pty=true for interactive CLI tools (Codex, Claude Code, Python REPL).\n\nDo NOT use vim/nano/interactive tools without pty=true — they hang without a pseudo-terminal. Pipe git output to cat if it might page.\n",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "command": {
-              "type": "string",
-              "description": "The command to execute on the VM"
-            },
-            "background": {
-              "type": "boolean",
-              "description": "Run the command in the background. Two patterns: (1) Long-lived processes that never exit (servers, watchers). (2) Long-running tasks paired with notify_on_complete=true — you can keep working and get notified when the task finishes. For short commands, prefer foreground with a generous timeout instead.",
-              "default": false
-            },
-            "timeout": {
-              "type": "integer",
-              "description": "Max seconds to wait (default: 180, foreground max: 600). Returns INSTANTLY when command finishes — set high for long tasks, you won't wait unnecessarily. Foreground timeout above 600s is rejected; use background=true for longer commands.",
-              "minimum": 1
-            },
-            "workdir": {
-              "type": "string",
-              "description": "Working directory for this command (absolute path). Defaults to the session working directory."
-            },
-            "pty": {
-              "type": "boolean",
-              "description": "Run in pseudo-terminal (PTY) mode for interactive CLI tools like Codex, Claude Code, or Python REPL. Only works with local and SSH backends. Default: false.",
-              "default": false
-            },
-            "notify_on_complete": {
-              "type": "boolean",
-              "description": "When true (and background=true), you'll be automatically notified exactly once when the process finishes. **This is the right choice for almost every long-running task** — tests, builds, deployments, multi-item batch jobs, anything that takes over a minute and has a defined end. Use this and keep working on other things; the system notifies you on exit. MUTUALLY EXCLUSIVE with watch_patterns — when both are set, watch_patterns is dropped.",
-              "default": false
-            },
-            "watch_patterns": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Strings to watch for in background process output. HARD RATE LIMIT: at most 1 notification per 15 seconds per process — matches arriving inside the cooldown are dropped. After 3 consecutive 15-second windows with dropped matches, watch_patterns is automatically disabled for that process and promoted to notify_on_complete behavior (one notification on exit, no more mid-process spam). USE ONLY for truly rare, one-shot mid-process signals on LONG-LIVED processes that will never exit on their own — e.g. ['Application startup complete'] on a server so you know when to hit its endpoint, or ['migration done'] on a daemon. DO NOT use for: (1) end-of-run markers like 'DONE'/'PASS' — use notify_on_complete instead; (2) error patterns like 'ERROR'/'Traceback' in loops or multi-item batch jobs — they fire on every iteration and you'll hit the strike limit fast; (3) anything you'd ever combine with notify_on_complete. When in doubt, choose notify_on_complete. MUTUALLY EXCLUSIVE with notify_on_complete — set one, not both."
-            }
-          },
-          "required": [
-            "command"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "text_to_speech",
-        "description": "Convert text to speech audio. Returns a MEDIA: path that the platform delivers as native audio. Compatible providers render as a voice bubble on Telegram; otherwise audio is sent as a regular attachment. In CLI mode, saves to ~/voice-memos/. Voice and provider are user-configured (built-in providers like edge/openai or custom command providers under tts.providers.<name>), not model-selected.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "text": {
-              "type": "string",
-              "description": "The text to convert to speech. Provider-specific character caps apply and are enforced automatically (OpenAI 4096, xAI 15000, MiniMax 10000, ElevenLabs 5k-40k depending on model); over-long input is truncated."
-            },
-            "output_path": {
-              "type": "string",
-              "description": "Optional custom file path to save the audio. Defaults to ~/./audio_cache/<timestamp>.mp3"
-            }
-          },
-          "required": [
-            "text"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "todo",
-        "description": "Manage your task list for the current session. Use for complex tasks with 3+ steps or when the user provides multiple tasks. Call with no parameters to read the current list.\n\nWriting:\n- Provide 'todos' array to create/update items\n- merge=false (default): replace the entire list with a fresh plan\n- merge=true: update existing items by id, add any new ones\n\nEach item: {id: string, content: string, status: pending|in_progress|completed|cancelled}\nList order is priority. Only ONE item in_progress at a time.\nMark items completed immediately when done. If something fails, cancel it and add a revised item.\n\nAlways returns the full current list.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "todos": {
-              "type": "array",
-              "description": "Task items to write. Omit to read current list.",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique item identifier"
-                  },
-                  "content": {
-                    "type": "string",
-                    "description": "Task description"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "pending",
-                      "in_progress",
-                      "completed",
-                      "cancelled"
-                    ],
-                    "description": "Current status"
-                  }
-                },
-                "required": [
-                  "id",
-                  "content",
-                  "status"
-                ]
-              }
-            },
-            "merge": {
-              "type": "boolean",
-              "description": "true: update existing items by id, add new ones. false (default): replace the entire list.",
-              "default": false
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "vision_analyze",
-        "description": "Load an image into the conversation so you can see it. Accepts a URL, local file path, or data URL. When your active model has native vision, the image is attached to your context directly and you read the pixels yourself on the next turn — call this any time the user references an image (filepath in their message, URL in tool output, screenshot from the browser, etc.). For non-vision models, falls back to an auxiliary vision model that returns a text description.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "image_url": {
-              "type": "string",
-              "description": "Image URL (http/https), local file path, or data: URL to load."
-            },
-            "question": {
-              "type": "string",
-              "description": "Your specific question or request about the image. Optional context the model uses on the next turn after seeing the image."
-            }
-          },
-          "required": [
-            "image_url",
-            "question"
-          ]
-        }
-      }
-    },
-    {
-      "type": "function",
-      "function": {
-        "name": "write_file",
-        "description": "Write content to a file, completely replacing existing content. Use this instead of echo/cat heredoc in terminal. Creates parent directories automatically. OVERWRITES the entire file — use 'patch' for targeted edits. Auto-runs syntax checks on .py/.json/.yaml/.toml and other linted languages; only NEW errors introduced by this write are surfaced (pre-existing errors are filtered out).",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string",
-              "description": "Path to the file to write (will be created if it doesn't exist, overwritten if it does)"
-            },
-            "content": {
-              "type": "string",
-              "description": "Complete content to write to the file"
-            }
-          },
-          "required": [
-            "path",
-            "content"
-          ]
-        }
-      }
     }
   ],
-  "message_count": 45,
+  "message_count": 51,
   "messages": [
     {
       "role": "user",
@@ -1517,27 +656,166 @@
     },
     {
       "role": "assistant",
-      "content": "Obsidian + Google Drive için en iyi 5 skill bence şunlar:\n\n1. **obsidian** — Vault içindeki notları okuma, düzenleme, linkleme ve yapı kurma  \n2. **google-workspace** — Drive, Docs, Sheets, Gmail işleri; dosya yönetimi için ana skill  \n3. **ocr-and-documents** — PDF, fatura, taranmış belge ve görsellerden metin çıkarma  \n4. **writing-plans** — Vault düzeni, klasör yapısı ve iş akışlarını adım adım planlama  \n5. **systematic-debugging** — Bir şey bozulursa nedenini düzenli şekilde bulma ve düzeltme\n\nKısa yorum:\n- *Obsidian tarafı* için: **obsidian**\n- *Drive/doküman tarafı* için: **google-workspace**\n- *Belge/fatura okuma* için: **ocr-and-documents**\n- *Kurulum ve düzen* için: **writing-plans**\n- *Sorun çözme* için: **systematic-debugging**\n\nİstersen bunu bir de:\n- **“en kritik 3 skill”**\n- ya da **“Obsidian + iş dokümanları için 5 skill”**\nolarak daha dar da çıkarayım."
-    },
-    {
-      "role": "user",
-      "content": "En kritik 3 ve 5 skill daha çıkar"
-    },
-    {
-      "role": "assistant",
-      "content": "Tabii — şöyle ayırayım:\n\n## En kritik 3 skill\n1. **obsidian** — Not kasasını kurmak, düzenlemek ve yönetmek için ana araç.\n2. **google-workspace** — Drive, Docs, Sheets ve dosya düzeni için ana omurga.\n3. **ocr-and-documents** — PDF, fatura ve taranmış belgeleri okunur/metne çevirmek için en kritik.\n\n## Ek 5 faydalı skill\n4. **writing-plans** — Vault yapısını ve iş akışını adım adım planlamak için.\n5. **systematic-debugging** — Bir şey bozulduğunda nedenini düzenli bulmak için.\n6. **notion** — Alternatif ya da ek bilgi/veri düzeni için.\n7. **linear** — Görev, proje ve süreç takibi için.\n8. **powerpoint** — Sunum, teklif ve rapor hazırlamak için.\n\n## Kısa özet\n- *Not tutma / kasa:* `obsidian`\n- *Dosya ve bulut:* `google-workspace`\n- *Belge okuma:* `ocr-and-documents`\n- *Kurulum ve yapı:* `writing-plans`\n- *Sorun çözme:* `systematic-debugging`\n\nİstersen bir sonraki mesajda bunları:\n- **günlük kullanım sırasına göre**\n- ya da **öncelik puanı vererek**\nsıralayayım.",
-      "reasoning": "**Crafting a Turkish response**\n\nThe user wants an answer in Turkish, and it seems like I might not need tools for this. They asked for an expansion, so I’ll aim to be concise. I could include the three most critical skills and then maybe five additional ones, as they mentioned asking for \"En kritik 3 ve 5 skill daha çıkar,\" which suggests a total of eight. I should think of how to categorize these effectively in my response.",
-      "finish_reason": "stop",
-      "reasoning_content": "**Crafting a Turkish response**\n\nThe user wants an answer in Turkish, and it seems like I might not need tools for this. They asked for an expansion, so I’ll aim to be concise. I could include the three most critical skills and then maybe five additional ones, as they mentioned asking for \"En kritik 3 ve 5 skill daha çıkar,\" which suggests a total of eight. I should think of how to categorize these effectively in my response.",
+      "content": "",
+      "reasoning": null,
+      "finish_reason": "tool_calls",
       "codex_reasoning_items": [
         {
           "type": "reasoning",
-          "encrypted_content": "gAAAAABqFM5WL1FfU_nPbeWvz9gSHfn26HAclJmbgGi3dfVqsjhqL8m-Ccoc5AB5PYtDQa0c1byzEjG0O_FP0v1ic01I9DASsYTWaMMLSByTl3q9a2Wdl0HOkVhcKeCZbU5xHKG-7mU21C1cqYMlL_DEPw3NmRa1VAmN3XnlUkvEAWE0jLQ1hVVa_Gynsdn0-ZKG4CDL8zWK2QQSZobsFpqWjiYet3BA5J25a08M6NuXIis8x0FtO39aOhgbndhJu0cIzlQuEaJrsVs0fR5sa0M3mcSto0NlE8rvDIvo5-_k8uqHdYMIp27tCbHUMlOb0NAQGXIzg7edYFEKi5CR7xLN97udsa3Pl3bfg0yLPWzcEe3krgACy7-WSLiQ2K8-0dHJjJ1wNwnzq0DswcXyVOnwzEkRUbItO1_2dwaqm_ndy5Tn7nhBLb9Pl6_PO2g0949oFEIxgBzkflKz0lB0efAQPv4zGF9xDwciAJVHZXyQo6QDJTp5kF2HICOuRE-f-xJw9WrMClEvlOVs_E0YF1kT6AtOq85tydLV_Ql2rKsI_wQwjCmKRWiGzP0-GZpJmroWykea04XHA63OE773PN0H4fLTsj3g1nGYu_-j5cGvrUdXx_aHyS1h7v3Vp32TtfjQWUtgY884BTgdUVVQ1Lr6vuNhDyE_-2EdWahLczYlv-k7kc1dNIAJfFUqfxX2hvh4WPnSEqn_V69xvXzLD-ob5Sfrl1FD-F6IqwezHi7WmClnih4AXlCFMZlZ1-J66FXf5vrDffZSDV0XTDuTEwzbI5HvCiBfv6o997x1v3T4e8nNQRiGpJ5Osxwhfmv0Zos_ykPSu3kH7yB3GAlY3BwSMXtpomxzSlm1-4V53mLlJh_wCqCAtQ_YO5Vwpo54arUPR-eR29rdA2KoeCZaZjxODX5CCAnaozciDEuaHSZpCRYTWkamB0zg-scZHHn6vFQgIPMKAy2_YZVNwTokXdIV4cxjvip0o0XUwGd3V3WOmAQLDvuYwp8fS9meUwKGh-37bGdrBqCMXqI0vrNov1YvsOVBjx0dAsvoMQPMXHhIpciIPN6M-SVG2WsAaAFk0OLPxnNtxhxZrW1ksp3PcWaOQkj6gRnNUkEwT1EcAkv_UXCDrBduPKlFeaiQd-J01mgrQ3WC-EkGEEt4nmhXjkcopZ-etXoKJ39KUe-bcwPd1ptSfZZZbre-nX21kFP4KEcen5xQ0SNNMNj8BtQtJFMr-JL-tgcXogVnGTZpDLmK0lnXwFrwZW7fVPqrVkYmBVw2drxnYJsCsntyn_NgIofHbBMRtGEATNMoq1eH0kMMyrePzHw_4Mruzf2MWs_4RRBoaJIG6ZctCi6p747h8pmavBR2JVstQElZAcRPoszO1rdgMv_wiDIznN7WQb5v3Zw9RbLdxaCvA6A7At-1bX0ZUMu9u18n-w==",
-          "id": "rs_0e8713bb64408e88016a14ce548a3c81919fd4e3bb9d7fc223",
+          "encrypted_content": "gAAAAABqFM35ZcxYdrJR57YvzI6XCa2hqu0JNXO8HHmT0U7k6yMgnwayloVHcPX6B0CZolbAffRz8uh9l9H8I1NtF9WkbiXBVyPV0TWGTZZ_0l5CateFC-G9M-ey1rbJSgkPaM4CgwaOFsX1WGcf5tC14dyYVnx1NRcpryBUHgKwTYKSyvR6BdxS2oat1xBsEuJCBEsmsqODkHOiz40rGsG2b5vSpzTmwM_2RjWgx45RincYSFK0rR2x01CXhskkjei1yFiMnsae4EWdGHk7BsoT_YoIMCq6c_cQK5cw-8u3xpDUMDtSzSE_rJywrwGLHOVWHpCqTszRi9UJWmvvKL6hEWATgSZ5rgKXuabXfGMFbWtLJjH3jAG6-Z-df5iCFtXubbzdc-ua6nCVE-604WYlvYm2WIDmXKZzWSwJHh2fnlOF45eQHtzGiwID_LQfNYLFcGaVtJex1WhE-SlOT1ptCMC9lTh57viu-s6DNYORDNgEhDvGTHlU0WmZmzAxl3XoeR-wcAlSCp2C70oNKsuEwH5Sk-6X4MNnAiFqWAoom2qKBqvgssPR9s8Z7bKi81Ath-LXuVPLujRuI30m_M9cqUfzPWKD__tXY7u-GSbHA9RJtNC5nlcFarMdxEX0oVIE4R4eTCpVWAmgwNQZd2KKriTdRpG7_FHFKbqqJfm2SEIbu6Y48KJxF5NK_1GlZAwOyVCWNKfHubPrOjOUffzUS6tWblFl7WPjmnES6T-vdOumk4g1HKNH0y2ArhDPTjpXse2j0hVQZJMHjlpQik4zc7wPOnwUJ8JQ-OjQ7sOa4DG1XM-D-nsgoKVdJrPQQs3tyo-2DedIwld86bf7WsLDYIhGb4o1NzBwST-BXZ17IV8tSV6BKVbzMBYLGlL3-oU8UgqEJtAOPTpdTPS4FW9PCNyfYuCq31Mk6W4Z-F66LHe0L5BFCKMw7Vk2rbgLviUiBfvXAOL-daIKMoDqeSgOrfuLKqYlF4Oe8TK_mwOXds4GYdEQYiTbm1Bi026hb-CT-lN9Mw-8FeUc1hvKTcSQe6pckRxEk2NJqm2juk6G0qqYb2IC2slGOu_Lat1gPP3obEf9ymy4wHAzfeLe6OJZI4NI5RzLceWeH4RG97aKSr8zdNryraZ-9okDbrukUv3-dE3JNPdQ62DAoV0lsQd36sr7Dij-avbqy15D0TBvcpdWZoS6Vf7tb_hRCSL28OpfcA6cwZwcHKMEhH94tP5x_Mz4eqm9sL1V89X9qe9sztbuO9h2MDfHXNuU-krKkpjwpjQ37wsunXilm1ztSDKMethg84rT5OqhX4BQ367GE-pWcP0e772axk6CMtLLYPk6FiXtrOVWa_DR7QPJRWnskWeoxw9uFS2725gNemK8Ne5iJvC0knI=",
+          "id": "rs_0e8713bb64408e88016a14cdf8d03c8191980fcbfd1274af57",
+          "summary": []
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "call_8rt9JUNX76sByAZ8wLHct3Ff",
+          "call_id": "call_8rt9JUNX76sByAZ8wLHct3Ff",
+          "response_item_id": "fc_0e8713bb64408e88016a14cdf9b2e881918ab7dc9d8a8ace2f",
+          "type": "function",
+          "function": {
+            "name": "skill_view",
+            "arguments": "{\"name\":\"google-workspace\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "name": "skill_view",
+      "content": "{\"success\": true, \"name\": \"google-workspace\", \"description\": \"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\", \"tags\": [\"Google\", \"Gmail\", \"Calendar\", \"Drive\", \"Sheets\", \"Docs\", \"Contacts\", \"Email\", \"OAuth\"], \"related_skills\": [\"himalaya\"], \"content\": \"---\\nname: google-workspace\\ndescription: \\\"Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.\\\"\\nversion: 1.1.0\\nauthor: Nous Research\\nlicense: MIT\\nplatforms: [linux, macos, windows]\\nrequired_credential_files:\\n  - path: google_token.json\\n    description: Google OAuth2 token (created by setup script)\\n  - path: google_client_secret.json\\n    description: Google OAuth2 client credentials (downloaded from Google Cloud Console)\\nmetadata:\\n  hermes:\\n    tags: [Google, Gmail, Calendar, Drive, Sheets, Docs, Contacts, Email, OAuth]\\n    homepage: https://github.com/NousResearch/hermes-agent\\n    related_skills: [himalaya]\\n---\\n\\n# Google Workspace\\n\\nGmail, Calendar, Drive, Contacts, Sheets, and Docs — through Hermes-managed OAuth and a thin CLI wrapper. When `gws` is installed, the skill uses it as the execution backend for broader Google Workspace coverage; otherwise it falls back to the bundled Python client implementation.\\n\\n## References\\n\\n- `references/gmail-search-syntax.md` — Gmail search operators (is:unread, from:, newer_than:, etc.)\\n\\n## Scripts\\n\\n- `scripts/setup.py` — OAuth2 setup (run once to authorize)\\n- `scripts/google_api.py` — compatibility wrapper CLI. It prefers `gws` for operations when available, while preserving Hermes' existing JSON output contract.\\n\\n## First-Time Setup\\n\\nThe setup is fully non-interactive — you drive it step by step so it works\\non CLI, Telegram, Discord, or any platform.\\n\\nDefine a shorthand first:\\n\\n```bash\\nGSETUP=\\\"python ${HERMES_HOME:-$HOME/.hermes}/skills/productivity/google-workspace/scripts/setup.py\\\"\\n```\\n\\n### Step 0: Check if already set up\\n\\n```bash\\n$GSETUP --check\\n```\\n\\nIf it prints `AUTHENTICATED`, skip to Usage — setup is already done.\\n\\n### Step 1: Triage — ask the user what they need\\n\\nBefore starting OAuth setup, ask the user TWO questions:\\n\\n**Question 1: \\\"What Google services do you need? Just email, or also\\nCalendar/Drive/Sheets/Docs?\\\"**\\n\\n- **Email only** → They don't need this skill at all. Use the `himalaya` skill\\n  instead — it works with a Gmail App Password (Settings → Security → App\\n  Passwords) and takes 2 minutes to set up. No Google Cloud project needed.\\n  Load the himalaya skill and follow its setup instructions.\\n\\n- **Email + Calendar** → Continue with this skill, but use\\n  `--services email,calendar` during auth so the consent screen only asks for\\n  the scopes they actually need.\\n\\n- **Calendar/Drive/Sheets/Docs only** → Continue with this skill and use a\\n  narrower `--services` set like `calendar,drive,sheets,docs`.\\n\\n- **Full Workspace access** → Continue with this skill and use the default\\n  `all` service set.\\n\\n**Question 2: \\\"Does your Google account use Advanced Protection (hardware\\nsecurity keys required to sign in)? If you're not sure, you probably don't\\n— it's something you would have explicitly enrolled in.\\\"**\\n\\n- **No / Not sure** → Normal setup. Continue below.\\n- **Yes** → Their Workspace admin must add the OAuth client ID to the org's\\n  allowed apps list before Step 4 will work. Let them know upfront.\\n\\n### Step 2: Create OAuth credentials (one-time, ~5 minutes)\\n\\nTell the user:\\n\\n> You need a Google Cloud OAuth client. This is a one-time setup:\\n>\\n> 1. Create or select a project:\\n>    https://console.cloud.google.com/projectselector2/home/dashboard\\n> 2. Enable the required APIs from the API Library:\\n>    https://console.cloud.google.com/apis/library\\n>    Enable: Gmail API, Google Calendar API, Google Drive API,\\n>    Google Sheets API, Google Docs API, People API\\n> 3. Create the OAuth client here:\\n>    https://console.cloud.google.com/apis/credentials\\n>    Credentials → Create Credentials → OAuth 2.0 Client ID\\n> 4. Application type: \\\"Desktop app\\\" → Create\\n> 5. If the app is still in Testing, add the user's Google account as a test user here:\\n>    https://console.cloud.google.com/auth/audience\\n>    Audience → Test users → Add users\\n> 6. Download the JSON file and tell me the file path\\n>\\n> Important Hermes CLI note: if the file path starts with `/`, do NOT send only the bare path as its own message in the CLI, because it can be mistaken for a slash command. Send it in a sentence instead, like:\\n> `The JSON file path is: /home/user/Downloads/client_secret_....json`\\n\\nOnce they provide the path:\\n\\n```bash\\n$GSETUP --client-secret /path/to/client_secret.json\\n```\\n\\nIf they paste the raw client ID / client secret values instead of a file path,\\nwrite a valid Desktop OAuth JSON file for them yourself, save it somewhere\\nexplicit (for example `~/Downloads/hermes-google-client-secret.json`), then run\\n`--client-secret` against that file.\\n\\n### Step 3: Get authorization URL\\n\\nUse the service set chosen in Step 1. Examples:\\n\\n```bash\\n$GSETUP --auth-url --services email,calendar --format json\\n$GSETUP --auth-url --services calendar,drive,sheets,docs --format json\\n$GSETUP --auth-url --services all --format json\\n```\\n\\nThis returns JSON with an `auth_url` field and also saves the exact URL to\\n`~/.hermes/google_oauth_last_url.txt`.\\n\\nAgent rules for this step:\\n- Extract the `auth_url` field and send that exact URL to the user as a single line.\\n- Tell the user that the browser will likely fail on `http://localhost:1` after approval, and that this is expected.\\n- Tell them to copy the ENTIRE redirected URL from the browser address bar.\\n- If the user gets `Error 403: access_denied`, send them directly to `https://console.cloud.google.com/auth/audience` to add themselves as a test user.\\n\\n### Step 4: Exchange the code\\n\\nThe user will paste back either a URL like `http://localhost:1/?code=4/0A...&scope=...`\\nor just the code string. Either works. The `--auth-url` step stores a temporary\\npending OAuth session locally so `--auth-code` can complete the PKCE exchange\\nlater, even on headless systems:\\n\\n```bash\\n$GSETUP --auth-code \\\"THE_URL_OR_CODE_THE_USER_PASTED\\\" --format json\\n```\\n\\nIf `--auth-code` fails because the code expired, was already used, or came from\\nan older browser tab, it now returns a fresh `fresh_auth_url`. In that case,\\nimmediately send the new URL to the user and have them retry with the newest\\nbrowser redirect only.\\n\\n### Step 5: Verify\\n\\n```bash\\n$GSETUP --check\\n```\\n\\nShould print `AUTHENTICATED`. Setup is complete — token refreshes automatically from now on.\\n\\n### Notes\\n\\n- Token is stored at `~/.hermes/google_token.json` and auto-refreshes.\\n- Pending OAuth session state/verifier are stored temporarily at `~/.hermes/google_oauth_pending.json` until exchange completes.\\n- If `gws` is installed, `google_api.py` points it at the same `~/.hermes/google_token.json` credentials file. Users do not need to run a separate `gws auth login` flow.\\n- To revoke: `$GSETUP --revoke`\\n\\n## Usage\\n\\nAll commands go through the API script. Set `GAPI` as a shorthand:\\n\\n```bash\\nGAPI=\\\"python ${HERMES_HOME:-$HOME/.hermes}/skills/productivity/google-workspace/scripts/google_api.py\\\"\\n```\\n\\n### Gmail\\n\\n```bash\\n# Search (returns JSON array with id, from, subject, date, snippet)\\n$GAPI gmail search \\\"is:unread\\\" --max 10\\n$GAPI gmail search \\\"from:boss@company.com newer_than:1d\\\"\\n$GAPI gmail search \\\"has:attachment filename:pdf newer_than:7d\\\"\\n\\n# Read full message (returns JSON with body text)\\n$GAPI gmail get MESSAGE_ID\\n\\n# Send\\n$GAPI gmail send --to user@example.com --subject \\\"Hello\\\" --body \\\"Message text\\\"\\n$GAPI gmail send --to user@example.com --subject \\\"Report\\\" --body \\\"<h1>Q4</h1><p>Details...</p>\\\" --html\\n$GAPI gmail send --to user@example.com --subject \\\"Hello\\\" --from '\\\"Research Agent\\\" <user@example.com>' --body \\\"Message text\\\"\\n\\n# Reply (automatically threads and sets In-Reply-To)\\n$GAPI gmail reply MESSAGE_ID --body \\\"Thanks, that works for me.\\\"\\n$GAPI gmail reply MESSAGE_ID --from '\\\"Support Bot\\\" <user@example.com>' --body \\\"Thanks\\\"\\n\\n# Labels\\n$GAPI gmail labels\\n$GAPI gmail modify MESSAGE_ID --add-labels LABEL_ID\\n$GAPI gmail modify MESSAGE_ID --remove-labels UNREAD\\n```\\n\\n### Calendar\\n\\n```bash\\n# List events (defaults to next 7 days)\\n$GAPI calendar list\\n$GAPI calendar list --start 2026-03-01T00:00:00Z --end 2026-03-07T23:59:59Z\\n\\n# Create event (ISO 8601 with timezone required)\\n$GAPI calendar create --summary \\\"Team Standup\\\" --start 2026-03-01T10:00:00-06:00 --end 2026-03-01T10:30:00-06:00\\n$GAPI calendar create --summary \\\"Lunch\\\" --start 2026-03-01T12:00:00Z --end 2026-03-01T13:00:00Z --location \\\"Cafe\\\"\\n$GAPI calendar create --summary \\\"Review\\\" --start 2026-03-01T14:00:00Z --end 2026-03-01T15:00:00Z --attendees \\\"alice@co.com,bob@co.com\\\"\\n\\n# Delete event\\n$GAPI calendar delete EVENT_ID\\n```\\n\\n### Drive\\n\\n```bash\\n# Search existing files\\n$GAPI drive search \\\"quarterly report\\\" --max 10\\n$GAPI drive search \\\"mimeType='application/pdf'\\\" --raw-query --max 5\\n\\n# Get metadata for a single file\\n$GAPI drive get FILE_ID\\n\\n# Upload a local file (auto-detects MIME type)\\n$GAPI drive upload /path/to/report.pdf\\n$GAPI drive upload /path/to/image.png --name \\\"Logo.png\\\" --parent FOLDER_ID\\n\\n# Download (binary files download as-is; Google-native files export to a\\n# sensible default — Docs→pdf, Sheets→csv, Slides→pdf, Drawings→png)\\n$GAPI drive download FILE_ID\\n$GAPI drive download DOC_ID --output ~/doc.pdf\\n$GAPI drive download DOC_ID --export-mime text/plain --output ~/doc.txt\\n\\n# Create a folder\\n$GAPI drive create-folder \\\"Reports\\\"\\n$GAPI drive create-folder \\\"Q4\\\" --parent FOLDER_ID\\n\\n# Share\\n$GAPI drive share FILE_ID --email alice@example.com --role reader\\n$GAPI drive share FILE_ID --email alice@example.com --role writer --notify\\n$GAPI drive share FILE_ID --type anyone --role reader        # anyone with link\\n$GAPI drive share FILE_ID --type domain --domain example.com --role reader\\n\\n# Delete — defaults to trash (reversible). Use --permanent to skip the trash.\\n$GAPI drive delete FILE_ID\\n$GAPI drive delete FILE_ID --permanent\\n```\\n\\n### Contacts\\n\\n```bash\\n$GAPI contacts list --max 20\\n```\\n\\n### Sheets\\n\\n```bash\\n# Create a new spreadsheet\\n$GAPI sheets create --title \\\"Q4 Budget\\\"\\n$GAPI sheets create --title \\\"Inventory\\\" --sheet-name \\\"Stock\\\"\\n\\n# Read\\n$GAPI sheets get SHEET_ID \\\"Sheet1!A1:D10\\\"\\n\\n# Write\\n$GAPI sheets update SHEET_ID \\\"Sheet1!A1:B2\\\" --values '[[\\\"Name\\\",\\\"Score\\\"],[\\\"Alice\\\",\\\"95\\\"]]'\\n\\n# Append rows\\n$GAPI sheets append SHEET_ID \\\"Sheet1!A:C\\\" --values '[[\\\"new\\\",\\\"row\\\",\\\"data\\\"]]'\\n```\\n\\n### Docs\\n\\n```bash\\n# Read\\n$GAPI docs get DOC_ID\\n\\n# Create a new Doc (optionally seeded with body text)\\n$GAPI docs create --title \\\"Meeting Notes\\\"\\n$GAPI docs create --title \\\"Draft\\\" --body \\\"First paragraph...\\\"\\n\\n# Append text to the end of an existing Doc\\n$GAPI docs append DOC_ID --text \\\"Additional content to append\\\"\\n```\\n\\n## Output Format\\n\\nAll commands return JSON. Parse with `jq` or read directly. Key fields:\\n\\n- **Gmail search**: `[{id, threadId, from, to, subject, date, snippet, labels}]`\\n- **Gmail get**: `{id, threadId, from, to, subject, date, labels, body}`\\n- **Gmail send/reply**: `{status: \\\"sent\\\", id, threadId}`\\n- **Calendar list**: `[{id, summary, start, end, location, description, htmlLink}]`\\n- **Calendar create**: `{status: \\\"created\\\", id, summary, htmlLink}`\\n- **Drive search**: `[{id, name, mimeType, modifiedTime, webViewLink}]`\\n- **Drive get**: `{id, name, mimeType, modifiedTime, size, webViewLink, parents, owners}`\\n- **Drive upload**: `{status: \\\"uploaded\\\", id, name, mimeType, webViewLink}`\\n- **Drive download**: `{status: \\\"downloaded\\\", id, name, path, mimeType}`\\n- **Drive create-folder**: `{status: \\\"created\\\", id, name, webViewLink}`\\n- **Drive share**: `{status: \\\"shared\\\", permissionId, fileId, role, type}`\\n- **Drive delete**: `{status: \\\"trashed\\\" | \\\"deleted\\\", fileId, permanent}`\\n- **Contacts list**: `[{name, emails: [...], phones: [...]}]`\\n- **Sheets get**: `[[cell, cell, ...], ...]`\\n- **Sheets create**: `{status: \\\"created\\\", spreadsheetId, title, spreadsheetUrl}`\\n- **Docs create**: `{status: \\\"created\\\", documentId, title, url}`\\n- **Docs append**: `{status: \\\"appended\\\", documentId, inserted_at, characters}`\\n\\n## Rules\\n\\n1. **Never send email, create/delete calendar events, delete Drive files, share files, or modify Docs/Sheets without confirming with the user first.** Show what will be done (recipients, file IDs, content, share role) and ask for approval. For `drive delete`, prefer the default trash (reversible) over `--permanent`.\\n2. **Check auth before first use** — run `setup.py --check`. If it fails, guide the user through setup.\\n3. **Use the Gmail search syntax reference** for complex queries — load it with `skill_view(\\\"google-workspace\\\", file_path=\\\"references/gmail-search-syntax.md\\\")`.\\n4. **Calendar times must include timezone** — always use ISO 8601 with offset (e.g., `2026-03-01T10:00:00-06:00`) or UTC (`Z`).\\n5. **Respect rate limits** — avoid rapid-fire sequential API calls. Batch reads when possible.\\n\\n## Troubleshooting\\n\\n| Problem | Fix |\\n|---------|-----|\\n| `NOT_AUTHENTICATED` | Run setup Steps 2-5 above |\\n| `REFRESH_FAILED` | Token revoked or expired — redo Steps 3-5 |\\n| `HttpError 403: Insufficient Permission` | Missing API scope — `$GSETUP --revoke` then redo Steps 3-5 |\\n| `AUTHENTICATED (partial)` or \\\"Token missing scopes\\\" | New write capabilities (Drive write/delete, Docs create/edit) require re-authorization. `$GSETUP --revoke` then redo Steps 3-5 to grant the upgraded scopes. |\\n| `HttpError 403: Access Not Configured` | API not enabled — user needs to enable it in Google Cloud Console |\\n| `ModuleNotFoundError` | Run `$GSETUP --install-deps` |\\n| Advanced Protection blocks auth | Workspace admin must allowlist the OAuth client ID |\\n\\n## Revoking Access\\n\\n```bash\\n$GSETUP --revoke\\n```\\n\", \"path\": \"productivity/google-workspace/SKILL.md\", \"skill_dir\": \"/opt/data/skills/productivity/google-workspace\", \"linked_files\": {\"references\": [\"references/gmail-search-syntax.md\"], \"scripts\": [\"scripts/google_api.py\", \"scripts/setup.py\", \"scripts/_hermes_home.py\", \"scripts/gws_bridge.py\"]}, \"usage_hint\": \"To view linked files, call skill_view(name, file_path) where file_path is e.g. 'references/api.md' or 'assets/config.yaml'\", \"required_environment_variables\": [], \"required_commands\": [], \"missing_required_environment_variables\": [], \"missing_credential_files\": [\"google_token.json\", \"google_client_secret.json\"], \"missing_required_commands\": [], \"setup_needed\": true, \"setup_skipped\": false, \"readiness_status\": \"setup_needed\", \"setup_note\": \"Setup needed before using this skill: missing file google_token.json, file google_client_secret.json.\", \"metadata\": {\"hermes\": {\"tags\": [\"Google\", \"Gmail\", \"Calendar\", \"Drive\", \"Sheets\", \"Docs\", \"Contacts\", \"Email\", \"OAuth\"], \"homepage\": \"https://github.com/NousResearch/hermes-agent\", \"related_skills\": [\"himalaya\"]}}}",
+      "tool_call_id": "call_8rt9JUNX76sByAZ8wLHct3Ff"
+    },
+    {
+      "role": "assistant",
+      "content": "Obsidian + Google Drive için en iyi 5 skill bence şunlar:\n\n1. **obsidian** — Vault içindeki notları okuma, düzenleme, linkleme ve yapı kurma  \n2. **google-workspace** — Drive, Docs, Sheets, Gmail işleri; dosya yönetimi için ana skill  \n3. **ocr-and-documents** — PDF, fatura, taranmış belge ve görsellerden metin çıkarma  \n4. **writing-plans** — Vault düzeni, klasör yapısı ve iş akışlarını adım adım planlama  \n5. **systematic-debugging** — Bir şey bozulursa nedenini düzenli şekilde bulma ve düzeltme\n\nKısa yorum:\n- *Obsidian tarafı* için: **obsidian**\n- *Drive/doküman tarafı* için: **google-workspace**\n- *Belge/fatura okuma* için: **ocr-and-documents**\n- *Kurulum ve düzen* için: **writing-plans**\n- *Sorun çözme* için: **systematic-debugging**\n\nİstersen bunu bir de:\n- **“en kritik 3 skill”**\n- ya da **“Obsidian + iş dokümanları için 5 skill”**\nolarak daha dar da çıkarayım.",
+      "reasoning": null,
+      "finish_reason": "stop",
+      "codex_reasoning_items": [
+        {
+          "type": "reasoning",
+          "encrypted_content": "gAAAAABqFM39uwyCf2nZ1FK6kFJnVPp07LHl5Gtnd8PecoX0mRmc86JM6TaVKCByvzOrxKrMtzHcgBeAWvnoS4AqTQ7sV7uU9cPxfu20x42N5_v7spI5v-yOroRl0YcEx_oTRU1BCVjv9erQIGPLHM5BKc8GAE_bpeA-pK9DtSZBbB1BmthxM_kar20coQaH6VeMXCwBdTHmX0Ai03TGsI0Oz5FzPAyuXUi9E9AQL0lpACRuFCU4gR-sruXIpcj5AUis_alc5z24T8fGx2PuivyyCt7MCsmLgz0WfjwpEItuSxlLzLG3QtAf1T2AL7VLZnuV_9VAkxlENxITjuVeoQqBQeJED77yP_oFWuvhorhufWPrJ9NgIheYlJ8W6SL-KTIBayp1HenQzwussqfEgLkwSlElnDW0N3sNos3_QJ_4ssiVH-YWhOHA1Xyu_TahjNLoDEd7R0kVeUJvOcGVKdgbhV_-xAHCGqayPnnmkAHFILN8gOy2BMBS7j5SYpmuB13aWBdFyK-sM1u0IejNGHbSB9N_E_M3smZkT52rJ0pPLDkwJ-hvU5lon_3gyl9Yj-jKs1LxM-uy7QSBwl2apSv7bkmBxCGjbyC_HaRyM_Zg9Z8BgLj99ljxqcBUqkoA_Us57PkJuSTWGgicJ-2qjJijVoTS-9LDMj4oWkU8kavBxwR6OVn6rYMip4mvXHBa52w0m5SYCL2HIjbj021KpvkFyhwGbnOBK8rnLm7KugYL9oFENUB3aLsduyR9xdjzsTrx3urMe4baQM8iwjOWc0FDjN2jVEzRPS4B-c-v7bQeDdsBgQu1S566JveMiYoyHNrB3hJ-PdaYtqL-YDX9MtGHTA1VgRqUfGe8tD_bSBj6SFIvX3iOCbj5i5bU4JyIVk0nrsF0JeJCxJfSt7oPZn5n_9ePu0uFgElmRYSOkmqYqUePVrfAgUQl6W7m2sZasyLeo0V6Oq604RvkxBeJ0aro4Vz94WKgPDsEY6kL3bebGg8ArhRN17810D2wKhiHqVEb_mReMjB2nsFBk8DjB5HhuPizEup58GMOMCoiC4xjhk3QsktYDhRXrI3jHMCHIg6VWnrTfDzhtdu3teuZ8sv1_lbCvoqIQCsvvS2EMrI-AmIgdjFjGtzvd7iHJ2k8y5IehpOVGqfz9Utb6M4LX8l_5-ovONf1XDxkXQfC3aMfwXae9SIcVPpaHdq6C5nKX_3WejfNQdq1RgdCQ6NvzdMQwG_RS1GCtj2QRVDMn0V6cMmV5zK7Mss012v7ROhcPrc-NuTYclWZmMWFNHVDhcHOOiH61hl_TRndcBAEKoYsog9mtj_OVh5aeWD8yFQk-YuLelAmHoFJ-lJao8uJoAP-5Qo4GOtvm2wHwhissNdtQOTWDw1PwO2UnqOMIaGhy8fvJ6RArVrswTBzIIvuA5TdP3X8Dsa9i0CqTxBk0lPPY4wSaessCEWgTfKzDQi8-cMZnYO3MTLd",
+          "id": "rs_0e8713bb64408e88016a14cdfc261c81919b4b603838c17a8b",
+          "summary": []
+        }
+      ],
+      "codex_message_items": [
+        {
+          "type": "message",
+          "role": "assistant",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Obsidian + Google Drive için en iyi 5 skill bence şunlar:\n\n1. **obsidian** — Vault içindeki notları okuma, düzenleme, linkleme ve yapı kurma  \n2. **google-workspace** — Drive, Docs, Sheets, Gmail işleri; dosya yönetimi için ana skill  \n3. **ocr-and-documents** — PDF, fatura, taranmış belge ve görsellerden metin çıkarma  \n4. **writing-plans** — Vault düzeni, klasör yapısı ve iş akışlarını adım adım planlama  \n5. **systematic-debugging** — Bir şey bozulursa nedenini düzenli şekilde bulma ve düzeltme\n\nKısa yorum:\n- *Obsidian tarafı* için: **obsidian**\n- *Drive/doküman tarafı* için: **google-workspace**\n- *Belge/fatura okuma* için: **ocr-and-documents**\n- *Kurulum ve düzen* için: **writing-plans**\n- *Sorun çözme* için: **systematic-debugging**\n\nİstersen bunu bir de:\n- **“en kritik 3 skill”**\n- ya da **“Obsidian + iş dokümanları için 5 skill”**\nolarak daha dar da çıkarayım."
+            }
+          ],
+          "id": "msg_0e8713bb64408e88016a14cdfd9b008191bb4a40b846e27693",
+          "phase": "final_answer"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Review the conversation above and update the skill library. Be ACTIVE — most sessions produce at least one skill update, even if small. A pass that does nothing is a missed learning opportunity, not a neutral outcome.\n\nTarget shape of the library: CLASS-LEVEL skills, each with a rich SKILL.md and a `references/` directory for session-specific detail. Not a long flat list of narrow one-session-one-skill entries. This shapes HOW you update, not WHETHER you update.\n\nSignals to look for (any one of these warrants action):\n  • User corrected your style, tone, format, legibility, or verbosity. Frustration signals like 'stop doing X', 'this is too verbose', 'don't format like this', 'why are you explaining', 'just give me the answer', 'you always do Y and I hate it', or an explicit 'remember this' are FIRST-CLASS skill signals, not just memory signals. Update the relevant skill(s) to embed the preference so the next session starts already knowing.\n  • User corrected your workflow, approach, or sequence of steps. Encode the correction as a pitfall or explicit step in the skill that governs that class of task.\n  • Non-trivial technique, fix, workaround, debugging path, or tool-usage pattern emerged that a future session would benefit from. Capture it.\n  • A skill that got loaded or consulted this session turned out to be wrong, missing a step, or outdated. Patch it NOW.\n\nPreference order — prefer the earliest action that fits, but do pick one when a signal above fired:\n  1. UPDATE A CURRENTLY-LOADED SKILL. Look back through the conversation for skills the user loaded via /skill-name or you read via skill_view. If any of them covers the territory of the new learning, PATCH that one first. It is the skill that was in play, so it's the right one to extend.\n  2. UPDATE AN EXISTING UMBRELLA (via skills_list + skill_view). If no loaded skill fits but an existing class-level skill does, patch it. Add a subsection, a pitfall, or broaden a trigger.\n  3. ADD A SUPPORT FILE under an existing umbrella. Skills can be packaged with three kinds of support files — use the right directory per kind:\n     • `references/<topic>.md` — session-specific detail (error transcripts, reproduction recipes, provider quirks) AND condensed knowledge banks: quoted research, API docs, external authoritative excerpts, or domain notes you found while working on the problem. Write it concise and for the value of the task, not as a full mirror of upstream docs.\n     • `templates/<name>.<ext>` — starter files meant to be copied and modified (boilerplate configs, scaffolding, a known-good example the agent can `reproduce with modifications`).\n     • `scripts/<name>.<ext>` — statically re-runnable actions the skill can invoke directly (verification scripts, fixture generators, deterministic probes, anything the agent should run rather than hand-type each time).\n     Add support files via skill_manage action=write_file with file_path starting 'references/', 'templates/', or 'scripts/'. The umbrella's SKILL.md should gain a one-line pointer to any new support file so future agents know it exists.\n  4. CREATE A NEW CLASS-LEVEL UMBRELLA SKILL when no existing skill covers the class. The name MUST be at the class level. The name MUST NOT be a specific PR number, error string, feature codename, library-alone name, or 'fix-X / debug-Y / audit-Z-today' session artifact. If the proposed name only makes sense for today's task, it's wrong — fall back to (1), (2), or (3).\n\nUser-preference embedding (important): when the user expressed a style/format/workflow preference, the update belongs in the SKILL.md body, not just in memory. Memory captures 'who the user is and what the current situation and state of your operations are'; skills capture 'how to do this class of task for this user'. When they complain about how you handled a task, the skill that governs that task needs to carry the lesson.\n\nIf you notice two existing skills that overlap, note it in your reply — the background curator handles consolidation at scale.\n\nDo NOT capture (these become persistent self-imposed constraints that bite you later when the environment changes):\n  • Environment-dependent failures: missing binaries, fresh-install errors, post-migration path mismatches, 'command not found', unconfigured credentials, uninstalled packages. The user can fix these — they are not durable rules.\n  • Negative claims about tools or features ('browser tools do not work', 'X tool is broken', 'cannot use Y from execute_code'). These harden into refusals the agent cites against itself for months after the actual problem was fixed.\n  • Session-specific transient errors that resolved before the conversation ended. If retrying worked, the lesson is the retry pattern, not the original failure.\n  • One-off task narratives. A user asking 'summarize today's market' or 'analyze this PR' is not a class of work that warrants a skill.\n\nIf a tool failed because of setup state, capture the FIX (install command, config step, env var to set) under an existing setup or troubleshooting skill — never 'this tool does not work' as a standalone constraint.\n\n'Nothing to save.' is a real option but should NOT be the default. If the session ran smoothly with no corrections and produced no new technique, just say 'Nothing to save.' and stop. Otherwise, act."
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "reasoning": "**Updating skill library**\n\nI need to update the skill library, particularly inspecting the loaded skills like Obsidian and Google Workspace. The user prefers concise communication, especially since they asked about integrating Obsidian with Google Drive in Turkish. It seems I should focus on updating either the Obsidian or Google Workspace skill, capturing user preferences for guidance on mixed usage of both tools. I want to ensure the skills reflect the coexistence of an assistant-managed vault with Google Drive effectively.\n**Patching the Obsidian skill**\n\nI should patch the Obsidian skill to include information about using Google Drive as a companion storage option. When the user asks for the \"best 5\" skills for Obsidian and Drive, I could prioritize skills like Obsidian, Google Workspace, OCR and Documents, Writing Plans, and Systematic Debugging. It would be good to update the skill to mention syncing the vault through Drive or iCloud, while treating Drive docs as external sources. Adding a reference for the \"Obsidian + Google Drive workflow\" would also be helpful.\n**Adding support for user preferences**\n\nI should consider adding support files under either the Obsidian or Google Workspace skills. There needs to be at least one update, so I might patch Obsidian to include a \"Paired with Google Drive\" subsection. When recommending skills for Obsidian and Drive, it's best to remember that this is user-specific preference based on workflow selection. The user prefers concise replies in Turkish, which means I should embed this preference in the skill body, even if the skill docs are in English. Maybe I should also patch the Hermes agent.\n**Inspecting file management**\n\nI'm considering using the skill_manage to write a file and make sure I have the exact content needed. I’ll patch the Obsidian skill by adding a new subsection and a pointer to reference. It’s crucial to ensure that the full patch string is unique. I'll use skill_manage to patch the old string with the new one. First, I'll probably write a reference file using skill_manage with the file path references/obsidian-google-drive-workflow.md.",
+      "finish_reason": "tool_calls",
+      "reasoning_content": "**Updating skill library**\n\nI need to update the skill library, particularly inspecting the loaded skills like Obsidian and Google Workspace. The user prefers concise communication, especially since they asked about integrating Obsidian with Google Drive in Turkish. It seems I should focus on updating either the Obsidian or Google Workspace skill, capturing user preferences for guidance on mixed usage of both tools. I want to ensure the skills reflect the coexistence of an assistant-managed vault with Google Drive effectively.\n**Patching the Obsidian skill**\n\nI should patch the Obsidian skill to include information about using Google Drive as a companion storage option. When the user asks for the \"best 5\" skills for Obsidian and Drive, I could prioritize skills like Obsidian, Google Workspace, OCR and Documents, Writing Plans, and Systematic Debugging. It would be good to update the skill to mention syncing the vault through Drive or iCloud, while treating Drive docs as external sources. Adding a reference for the \"Obsidian + Google Drive workflow\" would also be helpful.\n**Adding support for user preferences**\n\nI should consider adding support files under either the Obsidian or Google Workspace skills. There needs to be at least one update, so I might patch Obsidian to include a \"Paired with Google Drive\" subsection. When recommending skills for Obsidian and Drive, it's best to remember that this is user-specific preference based on workflow selection. The user prefers concise replies in Turkish, which means I should embed this preference in the skill body, even if the skill docs are in English. Maybe I should also patch the Hermes agent.\n**Inspecting file management**\n\nI'm considering using the skill_manage to write a file and make sure I have the exact content needed. I’ll patch the Obsidian skill by adding a new subsection and a pointer to reference. It’s crucial to ensure that the full patch string is unique. I'll use skill_manage to patch the old string with the new one. First, I'll probably write a reference file using skill_manage with the file path references/obsidian-google-drive-workflow.md.",
+      "codex_reasoning_items": [
+        {
+          "type": "reasoning",
+          "encrypted_content": "gAAAAABqFM4POSEnxskdfCSQx29wggQMhoUB9GLh5D40mtkJUQFps2lBi_ExBgy3LOVVNlpmhISW3ZLtEEnLBnE-xWU9cTSk3NU5yfRAvp0joO4tmHBy2HUzJL1_BPrXMra7QkoMGN7clKAEJFf9BbZEys4ziyPRwr3rK3wyhoA9o9NWvhLRu7NE8TeBhpvKyPnJyyZm7K0tX2yR2xHra9Yo8M-1cwhya10PaZVfqgMkooFeT7-rlKNhdDIj7NmIsTAyY16_70LDDa3hicgIDlq9pj2DGbcZGJCYrjMZWdx2cYioH4ZyiU1balRVvsUIB4F6hA_0kaaOcrh7muKp2XztZWHUfu3bHK06vYImeIg4r0ryLizSmN2aPwZQBeuUzdqCt0qIfn3ZKvB1n2nXCXVaHnDtt7OMcxF1UwgjDhcVxTe_iTDokGq2ihbe8iTPQDs52j58-G6h0uP9N_te2iEw1sT_GdfKACuw5mrxTKna9l0_ds5XS2Rk7WrjthH3dz1HBDAr3QcIFtkhe-zg-lCB0NoRhEORV2fQ6-i8-w6tywvhovx6CQrriyaAldti_F3duQmRJ4t-St3PGoHOmH8rXAwmcKUsv7j7XtCi1qVa6Fddt6q5JeyY4ErmhAMB-kwT_5YZz1myKGvl9czJWIqlds09tAzDYZQrqmAHyjWVrs0f4OkZnOvBxiXBlYRZt6MDP8_mYm3PZ2EglHZB8mGcN6PjPgUYvwIbvUXpomzv-pln7Hkpy8D4G5KhH8Eqund2G8A2r11WE3-6Mp87N6snFd-ARnqkeGEKmeLc9GmX2jGzCF6bUIoPHSTMN_x65K3JyTPgK71rkIN9buWBGOh4nuOzx4qK2IwCCp3g71lEZezpbuRcliqPMl8596WQ9rvtcNXkxeQWRYfi59mBKoo2aolKXMuKK71An0wEm4qmY1PxrKJGM2oPp6h-z3kZcQlGOw3TpizRWFpEogNdYLQYs0kD6_MKwVvVFE8eCaQFMdXCmucKLSu6JgmIEjblXyE5wDDHiZbwmBbiERjbHVpyorT1r1MAEdshWolgyHc7jf19LIC9H8xwVxd_4_PvIONt4yw0TjWub_oiBaXzLQGTE0UyENn9jWeAi_O7vid_C0ey31-E7HI8W3KTBh_R9vTyO60ailtmkdXdQJzmHCR_gbSufBRNQ-AY0FlZlk5D8ZsvW_dDv0A-yR1V-HkNfTaI4OlKDRMDxar4E3iXlyz9mizM44OBrJffUEheso4AJS2HTAkK3cv6CzDbRHi9nHcOzxz7UwUq-P1osQJbGVSaZhdMFDKf0BPhfNrbDO_Iva0xu4LvNMDPnQa0Lyxup2O1XOyyzgETG4GvSbCx3nC3Mb3BAS4Nz6lJv8veUn-_lIV4uhhFhl-ZciTZMqHjn1lq5qC3Cup-d7P188LxqomjadL6TFCnmKd4bitZaG0NB4fOYm3RSAX0-gX1XCBXytk7Vs3FTXsMqLw9CW0k_RHKidpC9JpWtEJFkbD-TNQTHbLWBCdCnMcp9TLJiE_nfnurYy7-gULbsrARop-PGvzM12Sy9LMMQqQMRKK3C4HCKPFvND7PoUcipy2QtNY6yIhE-5UqiDuJ8rKjOwjwjtrsfdAa5o_2z3UrzYFt9FATaoL_XsLtGXBvnKccPUMW1kVKmXp95h5F4kq_VknT-piCjWzVQj6eDTymFzxKnb0JKfxGRee9uGQ01EMqqsQ19r07n5esSC1M2rrS20TR5bThWuY72XAtPysWlp8orsCkcy6cC8zNz8TzqGos0CyL1zP1ewCeMpOk8_4Bp5fF_Yyaa-uTaUKRupDYhGT9L2kiiVqMUg2JjSio9KQCMvwlYvlCMgT2hwf0734huA2cpI8m8jmgBpx6ia4sS1japGc01DIZ0nqzTcTPaux2vmBbyyD8nwsvCZucJMj_5JEY4PPPbE4yVE4RsWBR1hIZH6pDfQJBvGhhIzvNmwLHCaRHcQigU_C3NlT9odo_I4nLxKYfPps0tRo1gQ8oKWIX_zch0-uswnIbXgrVQOeslIb3LOuWD5Mgs-5bqnqNYPhOLhjq2Ark17KyWzoRZAbY5sruUfGMEUXAZFsm1AsCIaaCKZnoSWzo7AQM3UuiU4Rp7HGlfOtUoEII9YKzg40L4FEHRnLUntnR38tZ0hdufLpL3WA_4KAO7zI2TI7tPUnbLxijbHMdDBHScC1rcDNvRP-bU6P1fbD8dEDeSf_Yvz7dMyxXFy1hRboptBWifqg0fETezfgjyUgp91KFZhwQxpuz7j0rzhurP0NL4zpSKEl-TQHftZOomuTiPcXSMPTphBGyO1TJk422a_80QLxpVVELGRPfAcHX_MRZViTt2-QQ76hAzn6Uv5s4k-bxZGIPxrVMWJToTjrz3a0G62r21CHgIkkfMurOzKqTY6y5XET2mhzIy-r3nW0ri1WHnC5Lg8OOMGpkYsZNETKSEAW56ZQT6e4RKW8lum8nvKiNg37JrMnbwghOzxPgKCsyeKjNW0f0q_xzLPlQktKXnmcaIlebPvCsZxMKsQZavGHdY7I5yGpsPjvhrGue1JURaN1_97ZK0lQPXrJCy4X0OxpKiFijUZWqT7h095PDY1xw7S88DwD4ShNwGJlzPrbQ0ZCycXigRekUC0RiEvNs5xkBedCIcXVdh-S9ql82-_hlrx6P9dbWZ-1bOZZm9ca2PEUZ0pa-IswVlShQawikwAHB1WQHZbgzQyI9m4X8ZuJxGtaNSlzfXiBtFdIKQyfi5rKD4VEVhXrwc4pvDDM4WglOTaUho7YILY2rndJil3lLJJUrhpWejgUFTAd5_1wMmRMx6uNph4Vw3EjHtwBTVx9fChkk5c9-8dcyq8rVwpZ6CHfB-vMClYKOe_Om7NnbkVl83nh9qa74P8VvpIENenkq-lTwTg7KcYAkr4RhkYVH6MDMFZimbRgq3PxP_sMNnD5lvk7Lq3-ZsnrqLIKeTNK0QZX-f4tj-N2zCPnwSLR1DcjxDo2AOFHTXmy7BhFGa5q7RXztLpRNxgjhYEpff7zy_Wtnnvw2nlCS3oN86C1M9dNyOV7v7fqsiMQ0XTlwjlDb7ZA_toPFE1vReR0sI-kVI1yh0c8baLgTKXGKPrNGAvXfgy6eQT4T1NhVhDMJVW0Mper0Z8qlO2Q3771FEfHckt2nd-w0UDugEzPkVHl_5QyWG29hYCQQfnBFXHOW84Mng9xhEfE2nI5EVc7K9OkgvmICWE7P19xpDulPTt4VWKFTwAQ_jMpLRZiVPLKyKpdFeezHuyxCIL2OH7FZFY4ZI45CV6s41lw1vv0-5COUQjsoWgh6axBt2oaQDE7EUoniwjEbj31jt1onfeE5WJpwn-4CS8lg0I22FBcwJngflxKj4Vkt6Oc7sxBlgu0PRLvQC73ELWsnvty1em8Jax3IqTgT6xSKcKYeP-vtbNtrmR5dPbMbjG72tFxKwUkNOT6I0BlNOiZfeoy66hHOoUzuy5NyyNUuXClLGaxQn49BbszXFEzRAWQnqk8FGpnewEI6bfEgeu-XEC98GctKC_BoZHTM6d61sPzBvvBJTR5GpT1WBcyZ4L-rz1fdAB3S9qCsympHiRbnRRHoK11GealTn79M-ZCi8YtOi-05lvz09Ez4lrGXEFC6ihoOTCeRIpPYa9CqOMTqAKF7cPYsO-qMw-Xd64oURRUG1Ewyn4Tu3xCxUNJBNu_ljs6_XY2uspP6B7ABR5YxdD65J9lIuZhVC3Nb87WdbMZxZtQk4jMtYP2AwgoOnMXxHtI6qh4VZYD_9_y3vimTlWBNmyG1VRF0bCH3WItMdQAx1nrkmFmyvykxV_H2QYMsDSHUJterMZD-GaCC2lEqLUbx0q5GuRQokZ8pcDu1oLJjnPjIUNp3t0QZOScOqKrPInoI0KQuqLQ7woHFs8El6XYq-eRwF5Enu4DD7T6OOs10hglGX_z3L5xHiKr7eCDxiUAxTt9cqhqfOcI9akQfeQoLhoPNXgF3Kvv7RlPekSL37axMXEwzHnu_HZp4sOZ9tAsuBz_BYGTOZ6bUReU5v1Hvih7CvUWgSYfQArnAZTABIgSwuasV4HMGe02-V5FSe04WzNkC9cUaBTTNcPkSUqzl3PzxLZ6yB8m2mI4zY6jDn5kq7_QBZ48QJQ386lrGldzWplfRqo_-cQhMVfpKKvS5N0tffPx98MOBUAKydu0rDkvZPTyYNeHzbpNJ8bgEUPEH1TSJw5fclG5D0bS6PfaliWyektbssl6cG7TnNiqstWPeiK7aCx9uxa56-OxFwSp1l3qiSNfd0q6Vc6Ot6Rp09uDvgIuyTygPqLbrrYqkd4t_Usg4uuHNIh-LUT4fvPEQRCvNTouPTGCSCw8W-9UJoRzWgtPSP4da2_FkTYmriE3xkxilVIG2DcPwugZ1xaeUyM0P1DUZ3xDHj2pfpzEpCwQID1s8FDQY0imdvO5_0zU9COziBKl5MytIEngVlJ4IvjNjdS0ec7VPLU9x2ZPMHydmicvwTmVevxwAV2JI40gPZd6gEiy14A5ch3a8XqacOzybt7g4HLVfOj1r8G2Y3TDOl9pnpgPf90qzx3YDKaHXx2446L6lG-KbzH9jY16qM55hmQihQBlRIXOcgZzNpbtzp7njwUyuVWoH1k-W1BpvL2Q71X235DC4nTqRaCIjlNy3ALagF-Vf6T6ALiRm6_Vty80smosY9kkJhj9e0P1lQXvRVVyGeAm8vWK7a7R-m4gcqzRbtZkwHbwNYFaT9Wr8hvjQa5Ej9DAGP176rcA9r0KDga23Sdd2RVv7EWclfUz19l51KYM4Psc5xH67T_27LsgF8gab_3h_cDfs1q7bh-qwyYSeBP9XcH8OdheLlhFcpdkxIMj1pIiSuDgpva5f7IDLGSdbgYYcl1bS2stEGuT54qZhu5U3gtpfkvxRTACLiwiMYxb41X4167X09wy0XaCURKVP6RG8u1sKEVfPRcaKZJgfiG4m0A8UPp8NJ9zvkqcW02R3rWCBUtO9CFYqb1zVc2L45iyVsP0zq19aHHhb3QzdRKTrqMYffKFW6ZElWHef_VCCzEowX5HJed9KKhYLUSDt2nPeJ5O-p-g1elKPwR8ON8xsO_WmdihrPqGqCXLeWw73ygvDla4rg1UfE5YXcSHXYjJXTKsE04iC_NjAix5wN_K6WzmVOlfofvQZA7DpbR3zI_p2a96AM66tEXBbrM1pYg3yCF45v3Tm8oFPIgt6V56k74JjzXnsZVVW7s-YQd6zVN9CMHPjRXTrNVX04LzeIS-KVLRgH3ZJeLcgkHAfjNavBj2rJI4L0Cq8rKmSAXQNZjE85v13Eyoxd3Kgqx4oMt6jwbYfmeXAKneceLM_SboqdROwpQ96nS6eHxgIsV7I_wv_96dfkL4yVe9MX8nxvMeIQjYY-RfmC7B_mXQuMn3wxMJi9MYa7zZrbwIaAwhiyfQlROtatZsFXcblkJhu2kzc4IvjTAfGbTcTzi50-mNKgKoRoniMIOhb1YLA6G8NE5N86AntvaitSwuyWGpMofuUYR_jMAaDhEFMB6QCCNKb02z3sTtp2x4bnPT_L4DyGBW5yvhP9Noek6UeO1X1OLqM2hRTyDvuwwySkVNMzWZ-PO2QOGLHIamS0MFn7UOz_nswSGjWvqfNjW9wOExd3IdDoMcVjQJzcEENyVwyFmjv6ioKShKvcdoBFtOBbMk4mfUGYOc04pxGNJh-zWCZyJfx4p666z6-cRAnsldLwOdinjeXIPcWVLpzqk5c16XUBIyQwKSSJbamDUb7Ov8FE0kLC0NdiVtNnW8ln9k9aBz7NlJJVG-wZkTzap_5qmhSS4gLBLSXePOukY37EsMI1Dc24Mihq0JKCa6PNGRPOu_RNetGFvR6rZs6auAREkBpWVWTUJf0whtIoj4YGuAPyrJlI-IdUW_K91GfVgxH6hiALdDNmmBR9_qnq86UFzUWYBTVQcczrFLsuJ7MrHdZcs4E-WkpccIE-rbhRxYYD8m3f1wwOKpEJdTxuQlPSA5vJDJk1MiQQeHs-oWPN6NbMyYNMZ_RrgHw7dmyRNFFsn8cqCDeO4HmPb-7dSnkFlR1J2yGtVcZ2dnkg3dFBrOjQxOx6qsRKV-83sVjV6gzYvFpwgmwLPAjMjWNPu3NqVWIl1_9Amd68LYI4kLEmysfeykIeOodBNuqWizf5nssyGWCE6jsxUWbbYhIh3OPvVXqpijeN_YRXNV75TDtSVqEPvkMjxbM9inrqC4uP3cVFy5YoaX0T5rXN-q18FqRpFKdY3Dge4ONKJwhKlqCxxeH9QaIZDKegHZoRqBnuKh_XGVBZu-cjZZ8E5f1rSlSaGKR6HaHJrw9YNm0YN9aoAW0r_LNhyelqrBouz1jrTywRRmiZmrobFFW6zfnngDXV2v2eLMYvW2kIFExcWQ6AWE-cs2txUKqSFNyoAn8TMGlIfm9lqmhhYki0FkpIy-vzx9eLiqfFXWTG3-G_l6hKIxSwcZtyjgIZUv5wqgOGw5lTKhsmlxKIrIuCcT1865B6hw3IJx0u9nUpd7oJbdMRxdb5_8qfQMqhVn8eWsZRBxC0au5hSt8gkJ5cZ4jN3ZGDz8iDowtVBzxsgnPEnsSyVKD92op7vVNpvkvs9_Z1XZVSZfuWKb-yMHeR4zhQb6Yazk3_mVo_g6gEW2Xm2rk-UxsXTCH6bBmsqnvcK8UY_XeGfDfvaSeA5kvHLJJBF7-UYcIzZBTJeYaMcAq99pc93NFP2BPafi00t344f2DK_E_fVw_6JnIICCI9fRpjvayGfXOlBGEaJ2GPmlYRiVX7EC3HqVo9htWNwsnduyjhzZ-hiBaz9vyeZSqH2eFZ76iDYxqkjMsq5d4VgnqY66Bg9t0Wozty-P3DaQ66opsuBreDQVqxsZuobAHpEVIr3MEXbd8IfpS36ZKkiDCiCLLoGdtXDy150_GB5092uv9Rr9MF-0j3MgqzV0iTTNN-b_OyJdu3SnKld2pwBl4Jk8k58qpboRDcUhTh7guEMWAsEJZHwR0km1G_GeNTV1SdAjzwCsReR5cJwaMB4tqYwOvPqxkKbw-W4xlow4fsWjVPucYywjTwbrZGhhXh7IR-IXVzrQZDlyiULWf8PS8epXeZVDMxVgX9PQ62mtelfa6zfHlbi8_w_QM6izXlWWDIB2zZdmaCn79-u66AdEpiWTnMV3AFZ3Zhv-QcaImt7vkFpp18Jp4yQ2s095iwaP33f2nM_v7yJSUlsJ4nsCUE0fWkGisMuLcnRvevEEnjARXNYGDr6dUct8rmAar3Vh0RhDfPhkhkK9RTztzMo4PN2KNFqdvd4tNuysYD6nUkMfQRmTybRG_VmqJtaIjuDIpCTkd1Gx1YXgu1uvvpNTA4zP677_qxd-0EzvNqC6m4OnGGZAzAAzS8zNulJmbSb0f-cH5SmPHiWJ3V8yBjRl2ilGJq2vupbHz6t-3RFyyUtB__lKxKqqRqdTHhsD2K5Tuh3H4fDTdoMW7L2xyOe7iEOZ-ec57Q0yYKV2-rJPiEqnbcyB2otjO99uf31zn7ysWfn9WcN3aBPuhmiNOJ7I8Cgqy-yCFQBJzAN6-y-qMwaQHixtawF6kQgLTdYzM0h5N7wkzctVxaPlT0jFvzCCCHGxOLgS3pBzNDSqI7RcT06YIShQMsvaRw9EsvfXF4Xs45SIMMMFSM4wRVl4oHbFSgz2XbyFs69htgWeRNsXRh5LJpqtW_Yvo0TprOYIb_nUyfPuQ7KB5ZUP7f9TUf2895H-XWfLB3ap8vdglutu7K8-H0RF99ghjLNlvNdPN1Vhnmsty5JmC_gIsIy5W2KI7PID5GI9NRzXcL9DE9gNU3wROjV9LRrL7_ICCv3AabUXcKSRxvhqL-VlzKzG6QOUa3t-EqaC1VLBk63ue4jWuILjF0XPCugvrzd8b86RkW4OayPWIuw7G25HHoyTYzGlFCWGxzaMFLSUXhoVwNMLyNgAv0CikPPoYPdwqX8qx1v_foOlGEkcoCoTLa7BiBybaYOytrn6Q5YFxDDz4QfAWJyYjupDAGB7DCPFE6BqB",
+          "id": "rs_0e8713bb64408e88016a14ce00f1248191b3da0647469877c2",
           "summary": [
             {
               "type": "summary_text",
-              "text": "**Crafting a Turkish response**\n\nThe user wants an answer in Turkish, and it seems like I might not need tools for this. They asked for an expansion, so I’ll aim to be concise. I could include the three most critical skills and then maybe five additional ones, as they mentioned asking for \"En kritik 3 ve 5 skill daha çıkar,\" which suggests a total of eight. I should think of how to categorize these effectively in my response."
+              "text": "**Updating skill library**\n\nI need to update the skill library, particularly inspecting the loaded skills like Obsidian and Google Workspace. The user prefers concise communication, especially since they asked about integrating Obsidian with Google Drive in Turkish. It seems I should focus on updating either the Obsidian or Google Workspace skill, capturing user preferences for guidance on mixed usage of both tools. I want to ensure the skills reflect the coexistence of an assistant-managed vault with Google Drive effectively."
+            },
+            {
+              "type": "summary_text",
+              "text": "**Patching the Obsidian skill**\n\nI should patch the Obsidian skill to include information about using Google Drive as a companion storage option. When the user asks for the \"best 5\" skills for Obsidian and Drive, I could prioritize skills like Obsidian, Google Workspace, OCR and Documents, Writing Plans, and Systematic Debugging. It would be good to update the skill to mention syncing the vault through Drive or iCloud, while treating Drive docs as external sources. Adding a reference for the \"Obsidian + Google Drive workflow\" would also be helpful."
+            },
+            {
+              "type": "summary_text",
+              "text": "**Adding support for user preferences**\n\nI should consider adding support files under either the Obsidian or Google Workspace skills. There needs to be at least one update, so I might patch Obsidian to include a \"Paired with Google Drive\" subsection. When recommending skills for Obsidian and Drive, it's best to remember that this is user-specific preference based on workflow selection. The user prefers concise replies in Turkish, which means I should embed this preference in the skill body, even if the skill docs are in English. Maybe I should also patch the Hermes agent."
+            },
+            {
+              "type": "summary_text",
+              "text": "**Inspecting file management**\n\nI'm considering using the skill_manage to write a file and make sure I have the exact content needed. I’ll patch the Obsidian skill by adding a new subsection and a pointer to reference. It’s crucial to ensure that the full patch string is unique. I'll use skill_manage to patch the old string with the new one. First, I'll probably write a reference file using skill_manage with the file path references/obsidian-google-drive-workflow.md."
+            }
+          ]
+        }
+      ],
+      "tool_calls": [
+        {
+          "id": "call_WZad2rcBi5pr42H2rYtxMtDH",
+          "call_id": "call_WZad2rcBi5pr42H2rYtxMtDH",
+          "response_item_id": "fc_0e8713bb64408e88016a14ce0f94cc819195b494b73d6721b6",
+          "type": "function",
+          "function": {
+            "name": "skill_manage",
+            "arguments": "{\"action\":\"write_file\",\"name\":\"obsidian\",\"file_path\":\"references/obsidian-google-drive-workflow.md\",\"file_content\":\"# Obsidian + Google Drive workflow\\n\\nUse this when the user treats Obsidian and Google Drive as complementary systems.\\n\\n## Guiding split\\n- **Obsidian vault**: long-form notes, structure, backlinks, planning, daily capture, idea processing.\\n- **Google Drive**: source documents, PDFs, scans, spreadsheets, exports, shareable business files.\\n\\n## Practical workflow\\n1. Capture quick notes into the Obsidian Inbox.\\n2. Store source files in Drive when they are documents, scans, or files the user may share.\\n3. Extract text from PDFs/scans with `ocr-and-documents` before moving the useful content into Obsidian.\\n4. Link between systems by using clear filenames and Drive links inside notes.\\n5. Keep the Obsidian vault lightweight; do not duplicate everything from Drive unless the user explicitly wants a mirror.\\n\\n## Skill routing\\nWhen the user asks for the best small set of skills for this workflow, prioritize:\\n- `obsidian`\\n- `google-workspace`\\n- `ocr-and-documents`\\n- `writing-plans`\\n- `systematic-debugging`\\n\\n## Tone/format\\nFor this user, prefer concise Turkish replies unless they ask for more detail.\"}"
+          }
+        },
+        {
+          "id": "call_tmfvCFwQPcvGh7FOK2YjfWsr",
+          "call_id": "call_tmfvCFwQPcvGh7FOK2YjfWsr",
+          "response_item_id": "fc_0e8713bb64408e88016a14ce0f94e08191ac296a929138bd2b",
+          "type": "function",
+          "function": {
+            "name": "skill_manage",
+            "arguments": "{\"action\":\"patch\",\"name\":\"obsidian\",\"old_string\":\"If the user has a generic Hermes GitHub backup workflow, include the vault directory in that mirrored backup scope so new notes/subfolders are captured automatically without per-folder requests.\\n\",\"new_string\":\"If the user has a generic Hermes GitHub backup workflow, include the vault directory in that mirrored backup scope so new notes/subfolders are captured automatically without per-folder requests.\\n\\nIf the user treats Obsidian and Google Drive as complementary systems, use the companion workflow reference at `references/obsidian-google-drive-workflow.md` for the default split and the recommended small skill set.\\n\"}"
+          }
+        },
+        {
+          "id": "call_999UFwzAMBjUwoNIsSY4knBM",
+          "call_id": "call_999UFwzAMBjUwoNIsSY4knBM",
+          "response_item_id": "fc_0e8713bb64408e88016a14ce0f94e88191826d36d84fd4cd15",
+          "type": "function",
+          "function": {
+            "name": "skill_manage",
+            "arguments": "{\"action\":\"patch\",\"name\":\"obsidian\",\"old_string\":\"This is a good fit for mixed-use vaults that combine business and personal material, such as:\\n- competitor lists and social accounts for a brand\\n- brand-specific price tracking and competitor pricing\\n- multiple brands in parallel\\n- personal planning, life notes, and future design\\n\",\"new_string\":\"This is a good fit for mixed-use vaults that combine business and personal material, such as:\\n- competitor lists and social accounts for a brand\\n- brand-specific price tracking and competitor pricing\\n- multiple brands in parallel\\n- personal planning, life notes, and future design\\n- Obsidian plus Google Drive workflows, where Drive holds source files and the vault holds the thinking layer\\n\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "name": "skill_manage",
+      "content": "{\"success\": true, \"message\": \"File 'references/obsidian-google-drive-workflow.md' written to skill 'obsidian'.\", \"path\": \"/opt/data/skills/note-taking/obsidian/references/obsidian-google-drive-workflow.md\"}",
+      "tool_call_id": "call_WZad2rcBi5pr42H2rYtxMtDH"
+    },
+    {
+      "role": "tool",
+      "name": "skill_manage",
+      "content": "{\"success\": true, \"message\": \"Patched SKILL.md in skill 'obsidian' (1 replacement).\"}",
+      "tool_call_id": "call_tmfvCFwQPcvGh7FOK2YjfWsr"
+    },
+    {
+      "role": "tool",
+      "name": "skill_manage",
+      "content": "{\"success\": true, \"message\": \"Patched SKILL.md in skill 'obsidian' (1 replacement).\"}",
+      "tool_call_id": "call_999UFwzAMBjUwoNIsSY4knBM"
+    },
+    {
+      "role": "assistant",
+      "content": "Güncelledim.\n\nYaptığım değişiklikler:\n- **`obsidian`** skill’ini genişlettim.\n- Yeni bir destek dosyası ekledim:  \n  `references/obsidian-google-drive-workflow.md`\n\nNe eklendi:\n- **Obsidian + Google Drive** birlikte kullanıldığında varsayılan iş bölümü\n- Drive’da kaynak dosyalar, vault’ta düşünce/not katmanı yaklaşımı\n- Bu iş akışı için önerilen küçük skill set:\n  - `obsidian`\n  - `google-workspace`\n  - `ocr-and-documents`\n  - `writing-plans`\n  - `systematic-debugging`\n- Bu kullanıcı için **kısa Türkçe cevap** tercihi notu\n\nNot:\n- Bu alan biraz **`obsidian`** ile **`google-workspace`** arasında örtüşüyor. Şimdilik akışı `obsidian` içinde topladım; gerekirse `google-workspace` tarafına da küçük bir tamamlayıcı not ekleyebilirim.",
+      "reasoning": "**Summarizing saved information**\n\nI think I need to ensure not to confuse things here. There's no need to mention \"Nothing to save\" since we actually did save something. Summarizing seems like a good way to communicate the essential points. I just want to make sure to keep the details relevant and not overload with tool specifics. Keeping it clear and straightforward should help maintain focus on what’s important for the user!",
+      "finish_reason": "stop",
+      "reasoning_content": "**Summarizing saved information**\n\nI think I need to ensure not to confuse things here. There's no need to mention \"Nothing to save\" since we actually did save something. Summarizing seems like a good way to communicate the essential points. I just want to make sure to keep the details relevant and not overload with tool specifics. Keeping it clear and straightforward should help maintain focus on what’s important for the user!",
+      "codex_reasoning_items": [
+        {
+          "type": "reasoning",
+          "encrypted_content": "gAAAAABqFM4WPdheHMvRuCeDzBUffTIYLvPeJmEcZwOIxh96ycTi11fDAw8mzkd4CB66sm_i7K0FhLc2LH0gn7yyTjAmP22Jm75WfqGfFWUEzPG2W0mdqtFZvdQvEMiXnzAi5Zoo_2ZH78B4GMHKt1RBvFRxAXkS-ZHE7Yd-52lzbv3AeX0I8E3NIa1P4cfGGPKh39iI8TjpQAF_50kct4eX4CZEx_epOg5ZMwHDAz3xQ6W0_ALu1X15M3wWtgi6agO2FZLfU05HuSOjP8qMX8X4XaRY2G7wo4flzmAy6mCnJ8Nmqjx4g7a14iq1q3Z8CELhJ1ZA1FZXd6C04o8V-EesXYAY8FIBsCWEeNekVaGGOg4m0J-wS2uQrx_jJ_YqbHFafcsNw-DFrzH2A-NeeE9OyqZ6IqjGrszWEnLsya8l-_LlSrg_BAlk5ZMyq09zf0MtOvm94_A3hd-cCsVgJ0goXyBgYwm0oEa-CXyAME9GDAYtMaPZ5q6GrcTeW3RAPEeir2z9UQNfWbrpKGDdbZSLpbRffKaGWPOJULl30ifm_tfjEqP-DZ_OP66z1CzWi-RVUnFbi2vA9y_wu1P45Lg_M_2dOovlMwCg9FVOFam4TOpS0HT-2fIMCj0ow9ODP-9BAe5Y141qnmTkT2uWq02e8bTc8A8-eJdcF3QihgiLYWA4_NVjO4tjaUloUm6EH5WZsMvNXS7BJVy9ltyXBXN4jbIzRW8iruRthz0erUfCPMPwAio366yQgg-j-Yr6wvn1ni-qRW3ZGyIGFaopYe-fJG9Y5FCFjuCe2CeYkPZbCVRhtFw_hMQD-ySgxA8Jam2Tso-g6DnslBmOC4FuVvWeuIS1Uer8TjfRULeNu1ss_iL2yRwUzOjmXrSZ_B5xDueJ9sZXkzYWlnNc8ZouS7zAGJjEZ5Om7m8KMw76g3DREHw07DDJrvX3QUuVklYELE9SuhhmfwmJ1qUMQuyLNnqj3gS8y_B8urNgpBaE3K9Q2E1DySPn9FogtTMkX5XkzfNaR3wEBh0UBCFkZo_t_bVynkUCXKKZR4gi409qh315fVBHtS9e4yWEsOr8zxdLeVll4n_FqujMEh_P_kb7pvjitLapGqMY-onaytoDe_TTarRrLO_wmU43jE45dkouf6gbtA2jQRECGZj07TKh1ueTj_yi-izJed6AQfFIM117NcXxiLAwjCWt1vP_LtTmzUz2BN88fCWVzaS-9wQ0vYQT9icYlgjbLAXhbBkCBKrz-f7jC-MCY9rpNPCVdRHs1fVX0GkZBGtlJ9OROTMS44FTEnBnKFVM1SIix_cMwLP3vuy5bBeLqQ6bqiDr-VCmBgH7uLfdGfaVbvFZVooyrwc7_5iEEM3zncek6585uk5nlmijnA-MCSfJdzLdE_tBTRjtZAy7JBeCXJZx042KB_pcLTM4GutkIiwhlgUxVo52svagd9XJ4XvHwF17bERDZCcQnftt7veXrGOsBa7QjaIhShoepPv3FUa2HTD6Lep6HXpfbuu7lvFFcIxO01Jd9PzJpwQ9-p5pHfKWa65Dv1pgd5Z9VEKJcFpyqA6p_n4ednNW1LHUZqILMcExAJ2q32QZaTbqxNG-kaQ4_5Shk1rLjZaqIaMyWOAgRfk3DMmMaolWYTMUdraNmayoiXOgrQXw5WEGLFLidlNCXIIy8oj8sk_YWRzq1qjawn3aFZsZWC5eJDGK_w_UiL_SPL7w3fZ4AAu0JsxB8cQDaRhAOUhUKW8h551c3DlVJRoQZBpZF5-sAY1aQdCg1RwvxyueHgoxKG2k_Pn-NbG0fcpZxqCy2zowUWO9ZieTqApIgNXomt4ZADCJkLtugKYtR878UjeaXIatza169uXfAt_MT0dM0Pie5_RlbS377adV0BygFzg4aJqg_cgf96rvQCaTPEF_bsfbuFJd6CzjSBNJdVkRl33TVK8ADArQlIPe_zFl0YsS-NWejqN5LBQBK6Y7WSPtv341Nug5nNy5XeeJ7Agi2ybfVvQiHqXQVocYfYaXYY3orHQZOUgD_gvnMFkFDNWRdMETcbQ1k9bG4rPhe-8cqdFQeEEHiycZ5XREvTfwl7KdcUJQckPgCPnCVhcC8ktefP8ZB7vgrM29A8y3GJhSfeVl9YdM1BkYIAQMgFrFR1yIShWLDFu8oqYv3ZwBPmJOV9XvAfTtZDbSzV4tyWUb0UHsx84EC6Cwpqnnc9Y5aWoePVgewC5E0_cr3u075vuSQmTT2P9voYSj5fAeeh_Q4qKRR3QDJ0GYNbwtanoq3LzHlEHGQ13PTVNonU2oAdg4DdxAyEeI01VS97hWjb8NMDrieG1Txe3pW9bpcAgCm4cI5akgr9Utqk_ZRkeUu6alPwB8j27Xx4wRed8RtueUdwfB4SYVfceVEcFqRT-fzM5MpvymNiwbjGOT5JoT8gLRKF571BT69le4_1ReSXKgeX8k4BUxPIWMkdhPSQpkSZAcbcpgEEhY24QrW37OrgsMiB252AzL",
+          "id": "rs_0e8713bb64408e88016a14ce12a6a88191a676aa519dfee2c3",
+          "summary": [
+            {
+              "type": "summary_text",
+              "text": "**Summarizing saved information**\n\nI think I need to ensure not to confuse things here. There's no need to mention \"Nothing to save\" since we actually did save something. Summarizing seems like a good way to communicate the essential points. I just want to make sure to keep the details relevant and not overload with tool specifics. Keeping it clear and straightforward should help maintain focus on what’s important for the user!"
             }
           ]
         }
@@ -1550,10 +828,10 @@
           "content": [
             {
               "type": "output_text",
-              "text": "Tabii — şöyle ayırayım:\n\n## En kritik 3 skill\n1. **obsidian** — Not kasasını kurmak, düzenlemek ve yönetmek için ana araç.\n2. **google-workspace** — Drive, Docs, Sheets ve dosya düzeni için ana omurga.\n3. **ocr-and-documents** — PDF, fatura ve taranmış belgeleri okunur/metne çevirmek için en kritik.\n\n## Ek 5 faydalı skill\n4. **writing-plans** — Vault yapısını ve iş akışını adım adım planlamak için.\n5. **systematic-debugging** — Bir şey bozulduğunda nedenini düzenli bulmak için.\n6. **notion** — Alternatif ya da ek bilgi/veri düzeni için.\n7. **linear** — Görev, proje ve süreç takibi için.\n8. **powerpoint** — Sunum, teklif ve rapor hazırlamak için.\n\n## Kısa özet\n- *Not tutma / kasa:* `obsidian`\n- *Dosya ve bulut:* `google-workspace`\n- *Belge okuma:* `ocr-and-documents`\n- *Kurulum ve yapı:* `writing-plans`\n- *Sorun çözme:* `systematic-debugging`\n\nİstersen bir sonraki mesajda bunları:\n- **günlük kullanım sırasına göre**\n- ya da **öncelik puanı vererek**\nsıralayayım."
+              "text": "Güncelledim.\n\nYaptığım değişiklikler:\n- **`obsidian`** skill’ini genişlettim.\n- Yeni bir destek dosyası ekledim:  \n  `references/obsidian-google-drive-workflow.md`\n\nNe eklendi:\n- **Obsidian + Google Drive** birlikte kullanıldığında varsayılan iş bölümü\n- Drive’da kaynak dosyalar, vault’ta düşünce/not katmanı yaklaşımı\n- Bu iş akışı için önerilen küçük skill set:\n  - `obsidian`\n  - `google-workspace`\n  - `ocr-and-documents`\n  - `writing-plans`\n  - `systematic-debugging`\n- Bu kullanıcı için **kısa Türkçe cevap** tercihi notu\n\nNot:\n- Bu alan biraz **`obsidian`** ile **`google-workspace`** arasında örtüşüyor. Şimdilik akışı `obsidian` içinde topladım; gerekirse `google-workspace` tarafına da küçük bir tamamlayıcı not ekleyebilirim."
             }
           ],
-          "id": "msg_0e8713bb64408e88016a14ce56b8608191a1883e575ce2ae34",
+          "id": "msg_0e8713bb64408e88016a14ce1621ec81918f81ccf1274ea9bb",
           "phase": "final_answer"
         }
       ]

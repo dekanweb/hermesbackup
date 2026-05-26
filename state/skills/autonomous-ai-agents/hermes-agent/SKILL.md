@@ -682,7 +682,10 @@ When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* wo
   - `scripts/`
   - `memories/`
   - `Documents/Obsidian Vault/` (vault)
-- **Deliberately excluded:** `sessions/` (session transcripts may contain secrets and can trigger GitHub Push Protection). See `references/github-backup-workflow.md` 1 GitHub push protection.
+- **Sessions (`sessions/`)**:
+  - Default/safe mode: exclude session transcripts (they can contain secrets and trigger GitHub Push Protection).
+  - Full-history mode (user explicitly wants         "every conversation backed up"): include `sessions/` but **scrub secrets during the mirror step** so raw tokens never reach GitHub.
+  - See `references/github-backup-sessions-scrub.md` for the scrub + recovery workflow when GH013 blocks a push.
   - `config.yaml`
   - `channel_directory.json`
   - `SOUL.md`
@@ -695,6 +698,7 @@ When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* wo
 - Prefer a private repo with a repo-scoped SSH deploy key and write access.
 - Keep the private key local only; if one repo uses one key, pin it with `core.sshCommand`.
 - If the user has a named manual trigger phrase for backups, honor it immediately and do not ask for extra confirmation. In this session the trigger phrase is **“şimdi yedek al”**.
+- If the user asks to run/fix a backup and explicitly says they don’t need code output (e.g. “bana kod vermene gerek yok, düzenle ve tekrar başlat”), do the fix + rerun directly; report only the result/status and any manual approval needed (don’t paste code blocks).
 - Keep backup and restore logic separate so restore can reconstruct the same Hermes home/profile layout without changing the backup path.
 - Restore workflows should support selecting an older git ref and a dry run before writing files.
 - Backup scripts should emit a simple status contract for automation (`STATUS: PUSHED` / `STATUS: NO_CHANGES`).
@@ -703,7 +707,7 @@ When a user wants Hermes backed up to GitHub, treat it as a *state-mirroring* wo
 
 - When you add cron wrapper scripts, mirror `scripts/` as part of the backup/restore round trip so the scheduled job survives restores.
 
-See `references/github-backup-workflow.md` for the canonical scope, exclusions, and restore notes, and `references/cron-backup-script-path.md` for the cron wrapper path pitfall.
+See `references/github-backup-workflow.md` for the canonical scope, exclusions, and restore notes; `references/github-backup-sessions-scrub.md` for including session history safely; and `references/cron-backup-script-path.md` for the cron wrapper path pitfall.
 
 ### Curator (skill lifecycle)
 

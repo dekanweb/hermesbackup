@@ -19,6 +19,8 @@ Treat the vault folder itself as the portable/exportable unit:
 
 If the user has a generic Hermes GitHub backup workflow, include the vault directory in that mirrored backup scope so new notes/subfolders are captured automatically without per-folder requests.
 
+If the user treats Obsidian and Google Drive as complementary systems, use the companion workflow reference at `references/obsidian-google-drive-workflow.md` for the default split and the recommended small skill set.
+
 ## Vault path
 
 Use a known or resolved vault path before calling file tools.
@@ -58,6 +60,7 @@ This is a good fit for mixed-use vaults that combine business and personal mater
 - brand-specific price tracking and competitor pricing
 - multiple brands in parallel
 - personal planning, life notes, and future design
+- Obsidian plus Google Drive workflows, where Drive holds source files and the vault holds the thinking layer
 
 When bootstrapping a vault for this pattern, prefer a lightweight top-level structure the assistant can route notes into immediately, for example:
 - `Inbox/` for quick capture

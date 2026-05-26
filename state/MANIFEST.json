@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-05-25T16:26:18.039911+00:00",
+  "created_at": "2026-05-26T16:01:01.363273+00:00",
   "exclusions": {
     "directories": [
       ".git",
@@ -73,13 +73,12 @@
   "root_files": [
     "config.yaml",
     "channel_directory.json",
-    "SOUL.md",
-    ".skills_prompt_snapshot.json"
+    "SOUL.md"
   ],
   "source_root": "/opt/data",
   "stats": {
     "copied_dirs": 220,
-    "copied_files": 657,
+    "copied_files": 663,
     "skipped_dirs": 0,
     "skipped_files": 5
   }
